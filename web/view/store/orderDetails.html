@@ -1,0 +1,914 @@
+@@include('../../inc-header.html', {"title": "订单详情"})
+@@include('../../top-nav.html')
+@@include('../../left-nav.html')
+<main class="app-content">
+    <div class="app-title">
+        <div>
+            <h1><i class="fa fa-th-list"></i> 订单详情</h1>
+        </div>
+        <ul class="app-breadcrumb breadcrumb side">
+            <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
+            <li class="breadcrumb-item">Tables</li>
+            <li class="breadcrumb-item active"><a href="@@HOSTview/store/order.html">返回订单管理</a></li>
+        </ul>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="tile">
+                <div class="tile-body">
+                    <div id="basicMessage"></div>
+                    <div class="row" style="margin-top: 10px">
+                        <!--数据表格modelBuilder.js-->
+                        <div class="col-lg-12" style="width: 97%">
+                            <ul class="nav nav-tabs">
+                                <li class="active" style="height: 28px">
+                                    <a href="#qh1" id="headerTab1" data-toggle="tab" style="outline:none;color: orange;cursor: pointer">商品信息</a>
+                                </li>
+                                <li class="active" style="height: 28px">
+                                    <a href="#qh2" id="headerTab2" data-toggle="tab" style="outline:none;cursor: pointer">收货人信息</a>
+                                </li>
+                                <li class="active" style="height: 28px">
+                                    <a href="#qh3" id="headerTab3" data-toggle="tab" style="outline:none;cursor: pointer">操作日志</a>
+                                </li>
+                                <li class="active" style="height: 28px">
+                                    <a href="#qh4" id="headerTab4" data-toggle="tab" style="outline:none;cursor: pointer">物流信息</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content" id="tabContent"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<!--订单信息模板-->
+<script id="orderMessage" type="text/html">
+    <div style="padding: 20px; border: 1px solid lightgray;background: #f2f2f2;margin-bottom: 30px;">
+        <div class="row" style="margin-bottom: 10px">
+            <div class="col-4">
+                <h5>订单信息&nbsp; (<%- dataArr.statusText %>)
+                <% if(dataArr.requestMemo!=''){ %> <span style="color: red">(<%= dataArr.requestMemo %>)</span>  <% } %>
+                </h5>
+            </div>
+        </div>
+        <div class="row" style="margin-bottom: 20px">
+            <div class="col-3">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">订单ID</span>
+                    </div>
+                    <input id="orderId" type="text" name="id" value="<%= dataArr.id %>" class="form-control">
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">订单号</span>
+                    </div>
+                    <input type="text" name="orderNo" placeholder="" value="<%= dataArr.orderNo %>" class="form-control">
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">数量</span>
+                    </div>
+                    <input type="text" name="num" placeholder="" value="<%= dataArr.num %>" class="form-control">
+                </div>
+            </div>
+            <!--<div class="col-3">-->
+                <!--<div class="input-group">-->
+                    <!--<div class="input-group-prepend">-->
+                        <!--<span class="input-group-text">抵扣能量</span>-->
+                    <!--</div>-->
+                    <!--<input type="text" name="deductionThinkingEnergy" placeholder="" value="<%= dataArr.deductionThinkingEnergy %>" class="form-control">-->
+                <!--</div>-->
+            <!--</div>-->
+        </div>
+        <div class="row" style="margin-bottom: 20px">
+            <div style="width: 20%;padding: 0 15px">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">商品总价</span>
+                    </div>
+                    <input type="text" name="goodsAmount" value="<%= dataArr.goodsAmount %>" class="form-control">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">元</span>
+                    </div>
+                </div>
+            </div>
+            <div style="width: 20%;padding: 0 15px">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">快递费</span>
+                    </div>
+                    <input type="text" name="expressFee" value="<%= dataArr.expressFee %>" class="form-control">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">元</span>
+                    </div>
+                </div>
+            </div>
+            <div style="width: 20%;padding: 0 15px">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">奖励金</span>
+                    </div>
+                    <input type="text" name="popularizeGoodsCommission" placeholder="" value="<%= dataArr.popularizeGoodsCommission %>" class="form-control">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">元</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-bottom: 20px">
+            <div style="width: 20%;padding: 0 15px">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">订单总价</span>
+                    </div>
+                    <input type="text" name="totalAmount" placeholder="" value="<%= dataArr.totalAmount %>" class="form-control">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">元</span>
+                    </div>
+                </div>
+            </div>
+            <div style="width: 20%;padding: 0 15px">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">钱包抵扣</span>
+                    </div>
+                    <input type="text" name="deductionWalletPrice" placeholder="" value="<%= dataArr.deductionWalletPrice %>" class="form-control">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">元</span>
+                    </div>
+                </div>
+            </div>
+            <div style="width: 20%;padding: 0 15px">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">实付款</span>
+                    </div>
+                    <input type="text" name="actualTotalAmount" placeholder="" value="<%= dataArr.actualTotalAmount %>" class="form-control">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">元</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-bottom: 20px">
+            <div class="col-4">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">下单时间</span>
+                    </div>
+                    <input type="text" name="createTime" placeholder="" value="<%= dataArr.createTime %>" class="form-control">
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">付款时间</span>
+                    </div>
+                    <input type="text" name="payTime" placeholder="" value="<%= dataArr.payTime %>" class="form-control">
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">发货时间</span>
+                    </div>
+                    <input type="text" name="deliveryTime" placeholder="" value="<%= dataArr.deliveryTime %>" class="form-control">
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-bottom: 20px">
+            <div class="col-4">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">物流公司</span>
+                    </div>
+                    <input type="text" name="expressCompany" value="<%= dataArr.expressCompany %>" class="form-control">
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">快递单号</span>
+                    </div>
+                    <input type="text" name="expressNumber" value="<%= dataArr.expressNo %>" class="form-control">
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-bottom: 20px">
+            <div class="col-6">
+                <% if (dataArr.canComplete==1) { %>
+                <button class="btn btn-primary" type="button" data-operate="complete">完成</button>
+                <% } %>
+                <% if (dataArr.canDeliver==1) { %>
+                <button class="btn btn-primary" type="button" data-operate="deliver">发货</button>
+                <% } %>
+                <% if (dataArr.canSubmitSupplier==1) { %>
+                <button class="btn btn-primary" type="button" data-operate="supplier">供应商接单</button>
+                <% } %>
+                <% if (dataArr.canRefund==1) { %>
+                <button class="btn btn-danger" type="button" data-operate="refund">申请退款</button>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</script>
+<!-- 供应商接单 Modal-->
+<script id="supplierModal" type="text/html">
+    <form id="supplierForm" disabled="true">
+        <fieldset>
+            <input type="hidden" name="id" value="<%= dataArr.id %>">
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">ID</span>
+                        </div>
+                        <input disabled type="text" value="<%= dataArr.id %>" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">商品总价</span>
+                        </div>
+                        <input disabled type="text" value="<%= dataArr.goodsAmount %>" class="form-control">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">元</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">快递费</span>
+                        </div>
+                        <input disabled type="text" value="<%= dataArr.expressFee %>" class="form-control">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">元</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">总价</span>
+                        </div>
+                        <input disabled type="text" value="<%= dataArr.totalAmount %>" class="form-control">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">元</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">钱包抵扣</span>
+                        </div>
+                        <input disabled type="text" value="<%= dataArr.deductionWalletPrice %>" class="form-control">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">元</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" style="color: red">实付款</span>
+                        </div>
+                        <input disabled type="text" value="<%= dataArr.actualTotalAmount %>" class="form-control">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">元</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">购买数量</span>
+                        </div>
+                        <input disabled type="text" value="<%= dataArr.num %>" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">供应商是否接单</span>
+                        </div>
+                        <select name="isAccept" class="form-control">
+                            <option value="1">接单</option>
+                            <option value="2">不接单</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row amountDiv" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">金额</span>
+                        </div>
+                        <input type="text" name="amount" placeholder="请输入金额" value="" class="form-control amount" required>
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">元</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row reasonDiv" style="margin-bottom: 15px;display: none">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">原因</span>
+                        </div>
+                        <input type="text" placeholder="请输入不接单原因" value="" class="form-control reason">
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</script>
+<!-- 商品信息 -->
+<script id="goodsMessage" type="text/html">
+    <div style="padding: 20px; border: 1px solid lightgray;background: #f2f2f2;margin-bottom: 30px;">
+        <div class="row" style="margin-bottom: 20px">
+            <div class="col-2">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">ID</span>
+                    </div>
+                    <input type="text" value="<%= dataArr.goodsArr.id %>" class="form-control">
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">商品标题</span>
+                    </div>
+                    <input type="text" value="<%= dataArr.goodsArr.title %>" class="form-control">
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">供应商</span>
+                    </div>
+                    <input type="text" value="<%= dataArr.supplierArr.name %>" class="form-control">
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-bottom: 20px">
+            <div class="col-3">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">分类</span>
+                    </div>
+                    <input type="text" value="<%= dataArr.goodsArr.categoryTitle %>" class="form-control">
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">父级分类</span>
+                    </div>
+                    <input type="text" value="<%= dataArr.goodsArr.parentCategoryTitle %>" class="form-control">
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">品牌</span>
+                    </div>
+                    <input type="text" value="<%= dataArr.goodsArr.brandTitle %>" class="form-control">
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-bottom: 20px">
+            <div style="width: 20%;padding: 0 15px">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">规格ID</span>
+                    </div>
+                    <input type="text" value="<%= dataArr.specsArr.id %>" class="form-control">
+                </div>
+            </div>
+            <div style="width: 20%;padding: 0 15px">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">规格名称</span>
+                    </div>
+                    <input type="text" value="<%= dataArr.specsArr.title %>" class="form-control">
+                </div>
+            </div>
+            <div style="width: 20%;padding: 0 15px">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">规格来源</span>
+                    </div>
+                    <select class="form-control" disabled>
+                        <option value="">请选择</option>
+                        <option value="1" <% if(dataArr.specsArr.source==1){ %> selected <% } %>>淘宝</option>
+                        <option value="2" <% if(dataArr.specsArr.source==2){ %> selected <% } %>>京东</option>
+                    </select>
+                </div>
+            </div>
+            <div style="width: 20%;padding: 0 15px">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">规格原价</span>
+                    </div>
+                    <input type="text" value="<%= dataArr.specsArr.originalPrice %>" class="form-control">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">元</span>
+                    </div>
+                </div>
+            </div>
+            <div style="width: 20%;padding: 0 15px">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">规格团购价</span>
+                    </div>
+                    <input type="text" value="<%= dataArr.specsArr.promotionPrice %>" class="form-control">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">元</span>
+                    </div>
+                </div>
+            </div>
+            <!--<div style="width: 17%;padding: 0 15px">-->
+                <!--<div class="input-group">-->
+                    <!--<div class="input-group-prepend">-->
+                        <!--<span class="input-group-text">奖励金</span>-->
+                    <!--</div>-->
+                    <!--<input type="text" value="<%= dataArr.specsArr.popularizeGoodsCommission %>" class="form-control">-->
+                    <!--<div class="input-group-prepend">-->
+                        <!--<span class="input-group-text">元</span>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        </div>
+        <div class="row" style="margin-bottom: 20px">
+            <div class="col-3">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">销售佣金</span>
+                    </div>
+                    <input type="text" value="<%= dataArr.specsArr.popularizeGoodsCommission %>" class="form-control">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">元</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">一级推广佣金</span>
+                    </div>
+                    <input type="text" value="<%= dataArr.specsArr.popularizeCommission_level1 %>" class="form-control">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">元</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">二级推广佣金</span>
+                    </div>
+                    <input type="text" value="<%= dataArr.specsArr.popularizeCommission_level2 %>" class="form-control">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">元</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-bottom: 20px">
+            <!--<div class="col-3">-->
+                <!--<div class="input-group">-->
+                    <!--<div class="input-group-prepend">-->
+                        <!--<span class="input-group-text">规格抵扣能量</span>-->
+                    <!--</div>-->
+                    <!--<input type="text" value="<%= dataArr.specsArr.deductionThinkingEnergy %>" class="form-control">-->
+                <!--</div>-->
+            <!--</div>-->
+            <div class="col-3">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">规格库存</span>
+                    </div>
+                    <input type="text" value="<%= dataArr.specsArr.stock %>" class="form-control">
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">配送范围</span>
+                    </div>
+                    <select class="form-control" disabled>
+                        <option value="0">请选择</option>
+                        <% for (var m = 0; m < expressArr.length; m++) { %>
+                        <option value="<%= expressArr[m].id %>" <% if(dataArr.specsArr.expressFeeId==expressArr[m].id) { %> selected <% } %>><%= expressArr[m].title %></option>
+                        <% }%>
+                    </select>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">发货时间</span>
+                    </div>
+                    <input type="text" value="<%= dataArr.specsArr.deliveryTime %>" class="form-control">
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-bottom: 20px">
+            <div class="col-4">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <h5 style="margin-right: 35px">商品封面图</h5>
+                    </div>
+                    <% if(dataArr.goodsArr.coverImg){ %>
+                    <a target="_blank" href="<%= dataArr.goodsArr.coverImg %>">
+                        <img src="<%= dataArr.goodsArr.coverImg %>" style="display: inline-block;width:200px;height:100px">
+                    </a>
+                    <% } %>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <h5 style="margin-right: 35px">规格图</h5>
+                    </div>
+                    <% if(dataArr.specsArr.pic){ %>
+                    <a target="_blank" href="<%= dataArr.specsArr.pic %>">
+                        <img src="<%= dataArr.specsArr.pic %>" style="display: inline-block;width:200px;height:100px">
+                    </a>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<!-- 收货人信息 -->
+<script id="userMessage" type="text/html">
+    <div style="padding: 20px; border: 1px solid lightgray;background: #f2f2f2;margin-bottom: 30px;">
+        <div class="row" style="margin-bottom: 20px">
+            <div class="col-3">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">ID</span>
+                    </div>
+                    <input type="text" value="<%= dataArr.userArr.id %>" class="form-control">
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">昵称</span>
+                    </div>
+                    <input type="text" value="<%= dataArr.userArr.nickName %>" class="form-control">
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">联系方式</span>
+                    </div>
+                    <input type="text" value="<%= dataArr.addressArr.mobile %>" class="form-control">
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-bottom: 20px">
+            <div class="col-3">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">省/直辖市</span>
+                    </div>
+                    <input type="text" value="<%= dataArr.addressArr.province %>" class="form-control">
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">市</span>
+                    </div>
+                    <input type="text" value="<%= dataArr.addressArr.city %>" class="form-control">
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">区</span>
+                    </div>
+                    <input type="text" value="<%= dataArr.addressArr.district %>" class="form-control">
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">地址</span>
+                    </div>
+                    <input type="text" value="<%= dataArr.addressArr.address %>" class="form-control">
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<!--操作日志模板-->
+<script id="logList" type="text/html">
+    <table class="table table-hover table-bordered" id="logTable">
+        <thead>
+        <tr>
+            <th>操作人</th>
+            <th>操作人类型</th>
+            <th>状态</th>
+            <th>操作内容</th>
+            <th>操作时间</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% if (dataArr.logArr.length > 0) { %>
+        <% for (var i = 0; i < dataArr.logArr.length; i++) { %>
+        <tr>
+            <td><%= dataArr.logArr[i].name %></td>
+            <td><%= dataArr.logArr[i].userTypeText %></td>
+            <td><%- dataArr.logArr[i].sourceText %></td>
+            <% if (dataArr.logArr[i].source == 3) { %>
+            <td>
+                <div>快递公司：<%= dataArr.logArr[i].contentArr.expressCompany %></div>
+                <div style="color: green">快递单号：<%= dataArr.logArr[i].contentArr.expressNo %></div>
+            </td>
+            <% }else if(dataArr.logArr[i].source == 5){ %>
+            <td>
+                <div>退款金额&nbsp;:&nbsp;<%= dataArr.logArr[i].contentArr.amount %>元</div>
+                <div>数量&nbsp;:&nbsp;<%= dataArr.logArr[i].contentArr.num %></div>
+                <!--<div>返还能量&nbsp;:&nbsp;<%= dataArr.logArr[i].contentArr.returnThinkingEnergy %></div>-->
+                <div style="color: red">退款原因&nbsp;:&nbsp;<%= dataArr.logArr[i].contentArr.reason %></div>
+            </td>
+            <% }else if(dataArr.logArr[i].source == 7){ %>
+            <td>
+                <% if(dataArr.logArr[i].contentArr.isAccept==1){ %>
+                <div style="color: green">商家已接单</div>
+                <% }else{ %>
+                <div style="color: red">商家不接单，原因：<%= dataArr.logArr[i].contentArr.reason %></div>
+                <% } %>
+            </td>
+            <% }else if(dataArr.logArr[i].source == 8){ %>
+            <td>
+                <div>退款金额&nbsp;:&nbsp;<%= dataArr.logArr[i].contentArr.amount %>元</div>
+                <div>退回钱包&nbsp;:&nbsp;<%= dataArr.logArr[i].contentArr.returnWalletPrice %>元</div>
+                <div>退款数量&nbsp;:&nbsp;<%= dataArr.logArr[i].contentArr.num %></div>
+                <!--<div>返还能量&nbsp;:&nbsp;<%= dataArr.logArr[i].contentArr.returnThinkingEnergy %></div>-->
+                <div style="color: red">退款原因&nbsp;:&nbsp;<%= dataArr.logArr[i].contentArr.reason %></div>
+            </td>
+            <% }else{ %>
+            <td><%= dataArr.logArr[i].content %></td>
+            <% } %>
+            <td><%= dataArr.logArr[i].createTime %></td>
+        </tr>
+        <% } %>
+        <% } else { %>
+        <tr>
+            <td colspan="10">没有符合条件的记录</td>
+        </tr>
+        <% } %>
+        </tbody>
+    </table>
+</script>
+<!--物流信息模板-->
+<script id="logisticsList" type="text/html">
+    <table class="table table-hover table-bordered" id="logisticsTable">
+        <thead>
+        <tr>
+            <!--<th>标题</th>-->
+            <th>时间</th>
+            <th>内容</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% if (dataArr.logisticsArr) { %>
+        <% if (dataArr.logisticsArr.length > 0) { %>
+        <% for (var i = 0; i < dataArr.logisticsArr.length; i++) { %>
+        <tr>
+            <!--<td><%= dataArr.logisticsArr[i].title %></td>-->
+            <td><%= dataArr.logisticsArr[i].time %></td>
+            <td style="text-align: left"><%= dataArr.logisticsArr[i].context %></td>
+        </tr>
+        <% } %>
+        <% } else { %>
+        <tr>
+            <td colspan="10">没有符合条件的记录</td>
+        </tr>
+        <% } %>
+        <% } else { %>
+        <tr>
+            <td colspan="10">没有符合条件的记录</td>
+        </tr>
+        <% } %>
+        </tbody>
+    </table>
+</script>
+<!-- 发货 Modal-->
+<script id="deliverModal" type="text/html">
+    <form id="deliverForm" disabled="true">
+        <fieldset>
+            <input type="hidden" name="id" value="<%= dataArr.id %>">
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">ID</span>
+                        </div>
+                        <input disabled type="text" value="<%= dataArr.id %>" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">订单号</span>
+                        </div>
+                        <input disabled type="text" value="<%= dataArr.orderNo %>" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group economy-wards">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">快递公司</span>
+                        </div>
+                        <input type="text" class="form-control expressCompanyId" placeholder="请输入快递公司关键字" required>
+                        <input type="hidden" name="expressCompanyId">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">快递单号</span>
+                        </div>
+                        <input type="text" name="expressNo" placeholder="请输入快递单号" value="<%= dataArr.expressNo %>" class="form-control" required>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</script>
+<!-- 退款申请 Modal-->
+<script id="refundModal" type="text/html">
+    <form id="refundForm" disabled="true">
+        <fieldset>
+            <input type="hidden" name="orderId" value="<%= dataArr.id %>">
+            <input type="hidden" name="amount" value="<%= dataArr.amount %>">
+            <input type="hidden" name="num" value="<%= dataArr.num %>">
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">订单ID</span>
+                        </div>
+                        <input disabled type="text" value="<%= dataArr.id %>" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">订单号</span>
+                        </div>
+                        <input disabled type="text" value="<%= dataArr.orderNo %>" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">总价</span>
+                        </div>
+                        <input disabled type="text" value="<%= dataArr.totalAmount %>" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">钱包抵扣</span>
+                        </div>
+                        <input disabled type="text" value="<%= dataArr.deductionWalletPrice %>" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">实付款</span>
+                        </div>
+                        <input disabled type="text" value="<%= dataArr.amount %>" class="form-control">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">元</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">退款金额</span>
+                        </div>
+                        <input type="text" disabled value="<%= dataArr.amount %>" class="form-control">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">元</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">退回钱包</span>
+                        </div>
+                        <input disabled type="text" value="<%= dataArr.deductionWalletPrice %>" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">退款数量</span>
+                        </div>
+                        <input type="text" disabled value="<%= dataArr.num %>" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">退款原因</span>
+                        </div>
+                        <input type="text" name="reason" placeholder="请输入退款原因" value="<%= dataArr.reason %>" class="form-control" required>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</script>
+<!-- 接单 Modal-->
+<script id="submitSupplierModal" type="text/html">
+    <form id="submitSupplierForm" disabled="true">
+        <fieldset>
+            <input type="hidden" name="id" value="<%= dataArr.id %>">
+            <input type="hidden" name="isAccept" value="1">
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">ID</span>
+                        </div>
+                        <input disabled type="text" value="<%= dataArr.id %>" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">金额</span>
+                        </div>
+                        <input type="text" name="amount" placeholder="请输入金额" value="<%= dataArr.amount %>" class="form-control" required>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</script>
+<script data-main="/public/js/module/store/orderDetails"></script>
+@@include('../../inc-footer.html')

@@ -1,0 +1,234 @@
+@@include('../../inc-header.html', {"title": "banner管理"})
+@@include('../../top-nav.html')
+@@include('../../left-nav.html')
+<main class="app-content">
+    <div class="app-title">
+        <div>
+            <h1><i class="fa fa-th-list"></i> banner管理</h1>
+        </div>
+        <ul class="app-breadcrumb breadcrumb side">
+            <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
+            <li class="breadcrumb-item">Tables</li>
+            <li class="breadcrumb-item active"><a href="#">banner管理</a></li>
+        </ul>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="tile">
+                <div class="row" style="margin-bottom:20px ">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
+                        <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                            <input type="text" class="form-control" id="searchCont" autocomplete="off" style="width:60%">
+                            <button class="btn btn-secondary" type="button" id="selectsearchlabel">标题</button>
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-primary dropdown-toggle" id="btnGroupDrop1" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item searchlabel" href="#">标题</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="btn-group" style="margin-left:1%">
+                            <div id="search" class="btn btn-primary" style="outline:none">提交搜索</div>
+                        </div>
+                        <div class="btn-group" style="float:right">
+                            <button id="addModal" class="btn btn-primary" data-toggle="modal" data-target="#myModal" style="outline:none;margin-left: 3px">新增</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="tile-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bordered" id="sampleTable"></table>
+                        <div id="visaPagination" class="d-flex justify-content-end">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<!-- 列表模板 -->
+<script id="visaListItem" type="text/html">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>标题</th>
+        <th>图片</th>
+        <th>图片跳转链接</th>
+        <th class="em-min-7">
+            <div class="dropdown">
+                <span class="dropdown-toggle" id="dropTop" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <%= positionText %>
+                </span>
+                <div class="dropdown-menu" aria-labelledby="dropTop" id="dropTopOptions">
+                    <a class="dropdown-item" href="javascript:" data-id="">所有</a>
+                    <a class="dropdown-item" href="javascript:" data-id="1">广场广告位一</a>
+                    <a class="dropdown-item" href="javascript:" data-id="2">广场广告位二</a>
+                    <a class="dropdown-item" href="javascript:" data-id="3">预见未来广告一</a>
+                    <a class="dropdown-item" href="javascript:" data-id="4">名人堂广告一</a>
+                </div>
+            </div>
+        </th>
+        <th>开始时间</th>
+        <th>结束时间</th>
+        <th class="em-min-7">
+            <div class="dropdown">
+                <span class="dropdown-toggle" id="dropStatus" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <%= statusText %>
+                </span>
+                <div class="dropdown-menu" aria-labelledby="dropdownVisaStatus" id="dropStatusOptions">
+                    <a class="dropdown-item" href="javascript:" data-id="">所有</a>
+                    <a class="dropdown-item" href="javascript:" data-id="1">有效</a>
+                    <a class="dropdown-item" href="javascript:" data-id="2">无效</a>
+                </div>
+            </div>
+        </th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% if (dataArr.length > 0) { %>
+    <% for (var i = 0; i < dataArr.length; i++) { %>
+    <tr data-id="<%= dataArr[i].id %>">
+        <td><%= dataArr[i].id %></td>
+        <td><%= dataArr[i].title %></td>
+        <td>
+            <% if (dataArr[i].pic) { %>
+            <a target="_blank" href="<%= dataArr[i].pic %>"><img src="<%= dataArr[i].pic %>" alt="" style="display: inline-block;width:50px;height: 100px"></a>
+            <% } else { %>
+            <span style="color:red">暂无图片</span>
+            <% } %>
+        </td>
+        <td>
+            <a target="_blank" href="<%= dataArr[i].url %>"><%= dataArr[i].url %></a>
+        </td>
+        <td><%= dataArr[i].positionText %></td>
+        <td><%= dataArr[i].startTime %></td>
+        <td><%= dataArr[i].endTime %></td>
+        <td><%- dataArr[i].statusText %></td>
+        <td>
+            <div class="d-flex flex-wrap justify-content-center">
+                <%- dataArr[i].materialButtonGroup %>
+            </div>
+        </td>
+    </tr>
+    <% } %>
+    <% } else { %>
+    <tr>
+        <td colspan="9">没有符合条件的记录</td>
+    </tr>
+    <% } %>
+    </tbody>
+</script>
+<!--Modal新增,编辑，查看问题-->
+<script id="modalDiv" type="text/html">
+    <form id="visaPassportForm" disabled="true">
+        <fieldset>
+            <input type="hidden" name="id" value="<%= dataArr.id %>">
+            <% if (dataArr.id) { %>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">ID</span>
+                        </div>
+                        <input type="text" disabled value="<%= dataArr.id %>" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <% } %>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">标题</span>
+                        </div>
+                        <input type="text" name="title" placeholder="请输入标题" value="<%= dataArr.title %>" class="form-control" required>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <h5 class="imgSizeMessage" style="color: red">
+                        <% if(dataArr.position==1){ %>
+                        提示：广场广告位一上传图片尺寸为690*300
+                        <% }else if(dataArr.position==2){ %>
+                        提示：广场广告位二上传图片尺寸为565*245
+                        <% }else if(dataArr.position==3){ %>
+                        提示：预见未来广告一上传图片尺寸为565*245
+                        <% }else if(dataArr.position==4){ %>
+                        提示：名人堂广告一上传图片尺寸为690*300
+                        <% }else{ %>
+                        提示：广场广告位一上传图片尺寸为690*300
+                        <% } %>
+                    </h5>
+                </div>
+            </div>
+            <div class="form-row uploadFile" style="margin-bottom: 15px">
+                <div class="col-5">
+                    <div class="input-group">
+                        <span style="margin-top:6px;margin-right: 10px">上传图片</span>
+                        <label class="file-label btn btn-primary mb-0 mr-2"><input type="file" name="avatar" class="uploadImg d-none">选择图片文件</label>
+                        <button type="button" class="btn btn-default avatarUpload" disabled>上传文件</button>
+                    </div>
+                </div>
+                <div class="col-7">
+                    <div class="input-group">
+                        <% if (dataArr.pic) { %>
+                        <h6 style="margin-top: 9px" class="imgUrl">
+                            <a target='_blank' href='<%= dataArr.pic %>'>图片预览</a>
+                        </h6>
+                        <% } else { %>
+                        <h6 style="margin-top: 9px" class="imgUrl"><span style="color:red">暂无图片</span></h6>
+                        <% } %>
+                        <input type="hidden" name="pic" value="<%= dataArr.pic %>">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">图片跳转链接</span>
+                        </div>
+                        <input type="text" name="url" placeholder="请输入图片跳转链接" value="<%= dataArr.url %>" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">位置</span>
+                        </div>
+                        <select class="form-control" name="position">
+                            <option value="1"  <% if(dataArr.position==1) { %> selected <% } %>>广场广告位一</option>
+                            <option value="2"  <% if(dataArr.position==2) { %> selected <% } %>>广场广告位二</option>
+                            <option value="3"  <% if(dataArr.position==3) { %> selected <% } %>>预见未来广告一</option>
+                            <option value="4"  <% if(dataArr.position==4) { %> selected <% } %>>名人堂广告一</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-6">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">开始时间</span>
+                        </div>
+                        <input autocomplete="off" type="text" name="startTime" placeholder="请输入开始时间" onclick="laydate({istime: false, format: 'YYYY-MM-DD hh:mm:ss'})" value="<%= dataArr.startTime %>" class="form-control" required>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">结束时间</span>
+                        </div>
+                        <input autocomplete="off" type="text" name="endTime" placeholder="请输入结束时间" onclick="laydate({istime: false, format: 'YYYY-MM-DD hh:mm:ss'})" value="<%= dataArr.endTime %>" class="form-control" required>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</script>
+<script data-main="/public/js/module/system/banner"></script>
+@@include('../../inc-footer.html')

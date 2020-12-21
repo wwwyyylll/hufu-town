@@ -1,0 +1,177 @@
+@@include('../../inc-header.html', {"title": "模块管理"})
+@@include('../../top-nav.html')
+@@include('../../left-nav.html')
+<main class="app-content">
+    <div class="app-title">
+        <div>
+            <h1><i class="fa fa-th-list"></i> 模块管理</h1>
+        </div>
+        <ul class="app-breadcrumb breadcrumb side">
+            <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
+            <li class="breadcrumb-item">Tables</li>
+            <li class="breadcrumb-item active"><a href="#">模块管理</a></li>
+        </ul>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="tile">
+                <div class="row" style="margin-bottom:20px;">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
+                        <div class="btn-group" role="group" aria-label="Button group with nested dropdown" style="display: none">
+                            <input type="text" class="form-control" id="searchCont" autocomplete="off" style="width:60%">
+                            <button class="btn btn-secondary" type="button" id="selectsearchlabel">标题</button>
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-primary dropdown-toggle" id="btnGroupDrop1" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item searchlabel" href="#">标题</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="btn-group" style="margin-left:1%;display: none">
+                            <div id="search" class="btn btn-primary" style="outline:none">提交搜索</div>
+                        </div>
+                        <div class="btn-group" style="float:left">
+                            <button data-value="0" data-id="oneLevel" class="btn btn-primary" data-operate="add" style="outline:none;margin-left: 3px">新增</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="tile-body">
+                    <div class="table-responsive">
+                        <div id="sampleTable"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<!-- 列表模板 -->
+<script id="visaListItem" type="text/html">
+    <% if(dataArr.length!=0){ %>
+        <% for(var i=0;i < dataArr.length;i++){ %>
+    <div style="margin-bottom: 40px" class="oneLevelDiv">
+        <div style="margin-bottom: 10px">
+            <h5>
+                <i data-operate="showTwoLevel" class="fa fa-folder" style="margin-right: 10px;cursor: pointer"></i>
+                <span data-operate="showTwoLevel" style="cursor: pointer" data-id="<%= dataArr[i].id %>"><%= dataArr[i].title %>&nbsp;&nbsp;<%= dataArr[i].idx %></span>
+                <i data-value="<%= dataArr[i].parentId %>" data-id="twoLevel" class="fa fa-plus-square-o" style="margin-left: 5px;cursor: pointer"  data-operate="add"></i>
+                <i data-value="<%= dataArr[i].parentId %>" data-id="oneLevel" class="fa fa-pencil-square-o" style="margin-left: 5px;cursor: pointer"  data-operate="edit"></i>
+                <i data-value="<%= dataArr[i].parentId %>" data-id="oneLevel" class="fa fa-envelope-open-o" style="margin-left: 5px;cursor: pointer;font-size: 16px"  data-operate="look"></i>
+                <span style="display: none"><%= dataArr[i].idx %></span>
+                <span style="display: none"><%= dataArr[i].url %></span>
+                <% if(dataArr[i].status==1){ %>
+                <i class="fa fa-eye" style="margin-left: 5px;cursor: pointer;color: green" data-operate="setOff"></i>
+                <% }else{ %>
+                <i class="fa fa-eye-slash" style="margin-left: 5px;cursor: pointer;color: red"  data-operate="setOn"></i>
+                <% } %>
+                <span class="moduleMessage" style="color: red;display: none">暂无子分类</span>
+            </h5>
+        </div>
+            <% if(dataArr[i].child){ %>
+                <% for(var j=0;j < dataArr[i].child.length;j++){ %>
+                <div class="twoLevelDiv"  <% if(isShow=='1'){ %> style="display:block" <% }else{ %> style="display:none" <% } %>>
+                <div style="position: relative;">
+                    <h6 style="height: 17px;line-height: 40px">
+                        <div style="width: 30px;height: 25px;margin-top: 15px;margin-right: 10px;float: left;border-left: 1px solid gray;border-bottom: 1px solid gray;position: absolute;left: 7px;top:-20px"></div>
+                        <div>
+                            <i data-operate="showThreeLevel" class="fa fa-folder" style="margin-right: 5px;margin-left: 40px;cursor: pointer"></i>
+                            <span data-operate="showThreeLevel" data-id="<%= dataArr[i].child[j].id %>" style="cursor: pointer"><%= dataArr[i].child[j].title %>&nbsp;&nbsp;<%= dataArr[i].child[j].idx %></span>
+                            <i data-value="<%= dataArr[i].child[j].parentId %>" data-id="threeLevel" class="fa fa-plus-square-o" style="margin-left: 5px;cursor: pointer"  data-operate="add"></i>
+                            <i data-value="<%= dataArr[i].child[j].parentId %>" data-id="twoLevel" class="fa fa-pencil-square-o" style="margin-left: 5px;cursor: pointer"  data-operate="edit"></i>
+                            <i data-value="<%= dataArr[i].child[j].parentId %>" data-id="twoLevel" class="fa fa-envelope-open-o" style="margin-left: 5px;cursor: pointer"  data-operate="look"></i>
+                            <span style="display: none"><%= dataArr[i].child[j].idx %></span>
+                            <span style="display: none"><%= dataArr[i].child[j].url %></span>
+                            <% if(dataArr[i].child[j].status==1){ %>
+                            <i class="fa fa-eye" style="margin-left: 5px;cursor: pointer;color: green" data-operate="setOff"></i>
+                            <% }else{ %>
+                            <i class="fa fa-eye-slash" style="margin-left: 5px;cursor: pointer;color: red"  data-operate="setOn"></i>
+                            <% } %>
+                            <span class="moduleMessage" style="color: red;display: none">暂无子分类</span>
+                        </div>
+                    </h6>
+                </div>
+    <% if(dataArr[i].child[j].child){ %>
+        <div class="threeLevelDiv" <% if(isShow=='1'){ %> style="margin-bottom: 20px;display:block" <% }else{ %> style="margin-bottom: 20px;display:none" <% } %>>
+        <% for(var k=0;k < dataArr[i].child[j].child.length;k++){ %>
+            <div style="position: relative;height: 22px;">
+                <h6>
+                    <div style="width: 30px;height: 22px;float: left;border-left: 1px solid gray;border-bottom: 1px solid gray;position: absolute;left: 47px;top:5px"></div>
+                    <div style="position: absolute;left:5px;top:17px">
+                        <i class="fa fa-leaf" style="margin-right: 5px;margin-left: 80px"></i>
+                        <span data-id="<%= dataArr[i].child[j].child[k].id %>"> <%= dataArr[i].child[j].child[k].title %>&nbsp;&nbsp;<%= dataArr[i].child[j].child[k].idx %></span>
+                        <i data-value="<%= dataArr[i].child[j].child[k].parentId %>" data-id="threeLevel" class="fa fa-pencil-square-o" style="margin-left: 5px;cursor: pointer"  data-operate="edit"></i>
+                        <i data-value="<%= dataArr[i].child[j].child[k].parentId %>" data-id="threeLevel" class="fa fa-envelope-open-o" style="margin-left: 5px;cursor: pointer"  data-operate="look"></i>
+                        <span style="display: none"><%= dataArr[i].child[j].child[k].idx %></span>
+                        <span style="display: none"><%= dataArr[i].child[j].child[k].url %></span>
+                        <% if(dataArr[i].child[j].child[k].status==1){ %>
+                        <i class="fa fa-eye" style="margin-left: 5px;cursor: pointer;color: green" data-operate="setOff"></i>
+                        <% }else{ %>
+                        <i class="fa fa-eye-slash" style="margin-left: 5px;cursor: pointer;color: red"  data-operate="setOn"></i>
+                        <% } %>
+                    </div>
+                </h6>
+            </div>
+        <% } %>
+        </div>
+    <% } %>
+                </div>
+                <% } %>
+            <% } %>
+    </div>
+        <% } %>
+    <% } %>
+</script>
+<!-- 添加module、list、opt（一级、二级、三级标题） -->
+<script id="moduleItem" type="text/html">
+    <form id="moduleForm">
+        <fieldset>
+            <input type="hidden" name="id" value="<%= dataArr.id %>">
+            <input type="hidden" name="parentId" value="<%= dataArr.parentId %>">
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group economy-wards">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">上级模块</span>
+                        </div>
+                        <input type="text" disabled class="form-control" value="<%= dataArr.parentName %>">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-6">
+                    <div class="input-group economy-wards">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">名称</span>
+                        </div>
+                        <input type="text" name="title" class="form-control" placeholder="请输入名称" value="<%= dataArr.title %>" required>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="input-group economy-wards">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">排序</span>
+                        </div>
+                        <input type="text" name="idx" class="form-control" placeholder="请输入排序" value="<%= dataArr.idx %>">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group economy-wards">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">url</span>
+                        </div>
+                        <input type="text" name="url" class="form-control" placeholder="请输入跳转链接" value="<%= dataArr.url %>">
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</script>
+<script id="twoOptionItem" type="text/html">
+    <option value="">请选择</option>
+    <% for (var i = 0; i < caListsArr.length; i++) { %>
+    <option data-id="<%= caListsArr[i].actionId %>" value="<%= caListsArr[i].id %>"><%= caListsArr[i].name %></option>
+    <% }%>
+</script>
+<script data-main="/public/js/module/system/moduleFigure"></script>
+@@include('../../inc-footer.html')

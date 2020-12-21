@@ -1,0 +1,288 @@
+@@include('../../inc-header.html', {"title": "渠道商提现申请"})
+@@include('../../top-nav.html')
+@@include('../../left-nav.html')
+<main class="app-content">
+    <div class="app-title">
+        <div>
+            <h1><i class="fa fa-th-list"></i> 渠道商提现申请</h1>
+        </div>
+        <ul class="app-breadcrumb breadcrumb side">
+            <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
+            <li class="breadcrumb-item">Tables</li>
+            <li class="breadcrumb-item active"><a href="#">渠道商提现申请</a></li>
+        </ul>
+    </div>
+    <div class="row" style="margin-top: 10px">
+        <!--数据表格modelBuilder.js-->
+        <div class="col-lg-12" style="width: 97%">
+            <ul class="nav nav-tabs">
+                <li class="active" style="height: 28px">
+                    <a href="#qh2" id="headerTab2" data-toggle="tab" style="outline:none;background: #ffffff;color: orange;cursor: pointer">待处理列表</a>
+                </li>
+                <li class="active" style="height: 28px">
+                    <a href="#qh1" id="headerTab1" data-toggle="tab" style="outline:none;background: #ffffff;cursor: pointer">已打款列表</a>
+                </li>
+                <li class="active" style="height: 28px">
+                    <a href="#qh3" id="headerTab3" data-toggle="tab" style="outline:none;background: #ffffff;cursor: pointer">已驳回列表</a>
+                </li>
+            </ul>
+            <div class="tab-content" id="tabContent"></div>
+        </div>
+    </div>
+</main>
+<!--已处理列表信息模板-->
+<script id="processedList" type="text/html">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="tile">
+                <div class="row" style="margin-bottom:20px ">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
+                        <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                            <input value="<%= content %>" type="text" class="form-control" id="searchCont" autocomplete="off" style="width:60%">
+                            <button class="btn btn-secondary" type="button" id="selectsearchlabel"><%= contentType %></button>
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-primary dropdown-toggle" id="btnGroupDrop1" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item searchlabel" href="#">昵称</a>
+                                    <a class="dropdown-item searchlabel" href="#">真实姓名</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="btn-group" style="margin-left:5px">
+                            <div id="search" class="btn btn-primary" style="outline:none">提交搜索</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tile-body">
+                    <div class="table-responsive" style="min-height: 300px">
+                        <table class="table table-hover table-bordered" id="processedTable">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>昵称</th>
+                                <th>账号类型</th>
+                                <th>账号</th>
+                                <th>真实姓名</th>
+                                <th>提现金额</th>
+                                <th>服务费</th>
+                                <th>实际退帐金额</th>
+                                <th>状态</th>
+                                <th>申请时间</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <% if (dataArr.length > 0) { %>
+                            <% for (var i = 0; i < dataArr.length; i++) { %>
+                            <tr data-id="<%= dataArr[i].id %>">
+                                <td><%= dataArr[i].id %></td>
+                                <td><%= dataArr[i].nickName %></td>
+                                <td><%- dataArr[i].accountTypeText %></td>
+                                <td><%= dataArr[i].account %></td>
+                                <td><%= dataArr[i].realName %></td>
+                                <td>
+                                    <% if(dataArr[i].money){ %>
+                                    <%= dataArr[i].money %>元
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <% if(dataArr[i].serviceCharge){ %>
+                                    <%= dataArr[i].serviceCharge %>元
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <% if(dataArr[i].actualReturnMoney){ %>
+                                    <%= dataArr[i].actualReturnMoney %>元
+                                    <% } %>
+                                </td>
+                                <td><%- dataArr[i].statusText %></td>
+                                <td><%= dataArr[i].createTime %></td>
+                            </tr>
+                            <% } %>
+                            <% } else { %>
+                            <tr>
+                                <td colspan="13">没有符合条件的记录</td>
+                            </tr>
+                            <% } %>
+                            </tbody>
+                        </table>
+                        <div id="visaPagination" class="d-flex justify-content-end"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<!--待处理列表信息模板-->
+<script id="waitList" type="text/html">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="tile">
+                <div class="row" style="margin-bottom:20px ">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
+                        <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                            <input value="<%= content %>" type="text" class="form-control" id="searchCont1" autocomplete="off" style="width:60%">
+                            <button class="btn btn-secondary" type="button" id="selectsearchlabel1"><%= contentType %></button>
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-primary dropdown-toggle" id="btnGroupDrop11" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item searchlabel1" href="#">昵称</a>
+                                    <a class="dropdown-item searchlabel1" href="#">真实姓名</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="btn-group" style="margin-left:5px">
+                            <div id="search1" class="btn btn-primary" style="outline:none">提交搜索</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tile-body">
+                    <div class="table-responsive" style="min-height: 300px">
+                        <table class="table table-hover table-bordered" id="waitTable">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>昵称</th>
+                                <th>账号类型</th>
+                                <th>账号</th>
+                                <th>真实姓名</th>
+                                <th>提现金额</th>
+                                <th>服务费</th>
+                                <th>实际退帐金额</th>
+                                <th>状态</th>
+                                <th>申请时间</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <% if (dataArr.length > 0) { %>
+                            <% for (var i = 0; i < dataArr.length; i++) { %>
+                            <tr data-id="<%= dataArr[i].id %>">
+                                <td><%= dataArr[i].id %></td>
+                                <td><%= dataArr[i].nickName %></td>
+                                <td><%- dataArr[i].accountTypeText %></td>
+                                <td><%= dataArr[i].account %></td>
+                                <td><%= dataArr[i].realName %></td>
+                                <td>
+                                    <% if(dataArr[i].money){ %>
+                                    <%= dataArr[i].money %>元
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <% if(dataArr[i].serviceCharge){ %>
+                                    <%= dataArr[i].serviceCharge %>元
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <% if(dataArr[i].actualReturnMoney){ %>
+                                    <%= dataArr[i].actualReturnMoney %>元
+                                    <% } %>
+                                </td>
+                                <td><%- dataArr[i].statusText %></td>
+                                <td><%= dataArr[i].createTime %></td>
+                                <td>
+                                    <div class="d-flex flex-wrap justify-content-center">
+                                        <%- dataArr[i].materialButtonGroup %>
+                                    </div>
+                                </td>
+                            </tr>
+                            <% } %>
+                            <% } else { %>
+                            <tr>
+                                <td colspan="13">没有符合条件的记录</td>
+                            </tr>
+                            <% } %>
+                            </tbody>
+                        </table>
+                        <div id="waitPagination" class="d-flex justify-content-end"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<!--已驳回列表信息模板-->
+<script id="rejectList" type="text/html">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="tile">
+                <div class="row" style="margin-bottom:20px ">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
+                        <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                            <input value="<%= content %>" type="text" class="form-control" id="searchCont2" autocomplete="off" style="width:60%">
+                            <button class="btn btn-secondary" type="button" id="selectsearchlabel2"><%= contentType %></button>
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-primary dropdown-toggle" id="btnGroupDrop12" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item searchlabel2" href="#">昵称</a>
+                                    <a class="dropdown-item searchlabel2" href="#">真实姓名</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="btn-group" style="margin-left:5px">
+                            <div id="search2" class="btn btn-primary" style="outline:none">提交搜索</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tile-body">
+                    <div class="table-responsive" style="min-height: 300px">
+                        <table class="table table-hover table-bordered" id="rejectTable">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>昵称</th>
+                                <th>账号类型</th>
+                                <th>账号</th>
+                                <th>真实姓名</th>
+                                <th>提现金额</th>
+                                <th>服务费</th>
+                                <th>实际退帐金额</th>
+                                <th>状态</th>
+                                <th style="width:12%;word-wrap: break-word;word-break:break-all;">驳回原因</th>
+                                <th>申请时间</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <% if (dataArr.length > 0) { %>
+                            <% for (var i = 0; i < dataArr.length; i++) { %>
+                            <tr data-id="<%= dataArr[i].id %>">
+                                <td><%= dataArr[i].id %></td>
+                                <td><%= dataArr[i].nickName %></td>
+                                <td><%- dataArr[i].accountTypeText %></td>
+                                <td><%= dataArr[i].account %></td>
+                                <td><%= dataArr[i].realName %></td>
+                                <td>
+                                    <% if(dataArr[i].money){ %>
+                                    <%= dataArr[i].money %>元
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <% if(dataArr[i].serviceCharge){ %>
+                                    <%= dataArr[i].serviceCharge %>元
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <% if(dataArr[i].actualReturnMoney){ %>
+                                    <%= dataArr[i].actualReturnMoney %>元
+                                    <% } %>
+                                </td>
+                                <td><%- dataArr[i].statusText %></td>
+                                <td style="width:12%;word-wrap: break-word;word-break:break-all;color: red"><%= dataArr[i].reason %></td>
+                                <td><%= dataArr[i].createTime %></td>
+                            </tr>
+                            <% } %>
+                            <% } else { %>
+                            <tr>
+                                <td colspan="13">没有符合条件的记录</td>
+                            </tr>
+                            <% } %>
+                            </tbody>
+                        </table>
+                        <div id="rejectPagination" class="d-flex justify-content-end"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<script data-main="/public/js/module/mall/channelBusinessRequest"></script>
+@@include('../../inc-footer.html')

@@ -1,0 +1,112 @@
+<!-- Navbar-->
+<header class="app-header">
+    <a class="app-header__logo" href="../../index.html">胡夫塔</a>
+    <!-- Sidebar toggle button--><a class="app-sidebar__toggle" href="#" data-toggle="sidebar" aria-label="Hide Sidebar"></a>
+    <!-- Navbar Right Menu-->
+    <ul class="app-nav">
+        <li class="app-search">
+            <input class="app-search__input" type="search" placeholder="Search">
+            <button class="app-search__button"><i class="fa fa-search"></i></button>
+        </li>
+        <!--Notification Menu-->
+        <li class="dropdown" style="position: relative">
+            <a class="app-nav__item" href="#" data-toggle="dropdown" aria-label="Show notifications">
+                <i class="fa fa-bell-o fa-lg"></i>
+            </a>
+            <span class="warnCnt" style="display: inline-block;width: 22px;height: 22px;background: red;border-radius: 50%;position: absolute;left: 28px;top: 8px;color: #ffffff;font-size: 12px;text-align: center;line-height: 22px;border-color: red;"></span>
+            <ul id="warnList" class="app-notification dropdown-menu dropdown-menu-right" style="width: 350px;left:-80px"></ul>
+        </li>
+        <!-- User Menu-->
+        <li class="dropdown"><a class="app-nav__item" href="#" data-toggle="dropdown" aria-label="Open Profile Menu"><i class="fa fa-user fa-lg"></i></a>
+            <ul class="dropdown-menu settings-menu dropdown-menu-right">
+                <li><a class="dropdown-item" href="page-user.html"><i class="fa fa-cog fa-lg"></i> Settings</a></li>
+                <li><a class="dropdown-item" href="page-user.html"><i class="fa fa-user fa-lg"></i> Profile</a></li>
+                <li><span class="dropdown-item" id="logout" style="cursor: pointer"><i class="fa fa-sign-out fa-lg"></i> Logout</span></li>
+            </ul>
+        </li>
+    </ul>
+</header>
+<script id="warnItem" type="text/html">
+    <% if (dataArr.length > 0) { %>
+    <li class="app-notification__title">共有<%= cnt %>条警告信息</li>
+    <div class="app-notification__content" style="padding-bottom: 10px;padding-top: 10px;">
+        <li>
+            <div style="padding:6px 10px;width: 100%">
+                <!--<p class="app-notification__message">-->
+                    <!--<h5>1、胡夫塔</h5>-->
+                <!--</p>-->
+                <h5 style="margin-bottom: 0">胡夫塔</h5>
+            </div>
+        </li>
+    <% for(var i=0;i < dataArr.length;i++){ %>
+        <% if (dataArr[i].type == 1 || dataArr[i].type == 2 || dataArr[i].type == 3 || dataArr[i].type == 5) { %>
+        <li>
+                <div style="padding:6px 10px;width: 100%">
+                    <% if (dataArr[i].type == 1) { %>
+                    <p class="app-notification__message">
+                        <i class="fa fa-envelope" style="font-size: 13px;color:#00635a"></i>
+                        <a style="text-decoration: underline;word-wrap: break-word;word-break:break-all;margin-left: 4px" target="_blank" href="@@HOSTview/system/guestBook.html?warn=1"><%= dataArr[i].title %><span style="color:red">【<%= dataArr[i].cnt %>条】</span></a>
+                    </p>
+                    <% }else if(dataArr[i].type == 2){ %>
+                    <p class="app-notification__message">
+                        <i class="fa fa-envelope" style="font-size: 13px;color:#00635a"></i>
+                        <a style="text-decoration: underline;word-wrap: break-word;word-break:break-all;margin-left: 4px" target="_blank" href="@@HOSTview/mall/categoryRelation.html?warn=1"><%= dataArr[i].title %><span style="color:red">【<%= dataArr[i].cnt %>条】</span></a>
+                    </p>
+                    <% }else if(dataArr[i].type == 3){ %>
+                    <p class="app-notification__message">
+                        <i class="fa fa-envelope" style="font-size: 13px;color:#00635a"></i>
+                        <a style="text-decoration: underline;word-wrap: break-word;word-break:break-all;margin-left: 4px" target="_blank" href="@@HOSTview/mall/goods.html?warn=1"><%= dataArr[i].title %><span style="color:red">【<%= dataArr[i].cnt %>条】</span></a>
+                    </p>
+                    <% }else if(dataArr[i].type == 5){ %>
+                    <p class="app-notification__message">
+                        <i class="fa fa-envelope" style="font-size: 13px;color:#00635a"></i>
+                        <a style="text-decoration: underline;word-wrap: break-word;word-break:break-all;margin-left: 4px" target="_blank" href="@@HOSTview/subject/subject.html?warn=1"><%= dataArr[i].title %><span style="color:red">【<%= dataArr[i].cnt %>个】</span></a>
+                    </p>
+                    <% }else{ %>
+                    <p class="app-notification__message" style="word-wrap: break-word;word-break:break-all"><i class="fa fa-envelope" style="font-size: 13px;color:#00635a;margin-right: 4px"></i><%= dataArr[i].title %><span style="color:red">【<%= dataArr[i].cnt %>人】</span></p>
+                    <% } %>
+                </div>
+        </li>
+        <% } %>
+    <% } %>
+        <li>
+            <div style="padding:6px 10px;width: 100%">
+                <h5 style="margin-bottom: 0">带货团</h5>
+            </div>
+        </li>
+        <% for(var i=0;i < dataArr.length;i++){ %>
+        <% if (dataArr[i].type == 4 || dataArr[i].type == 6 || dataArr[i].type == 7 || dataArr[i].type == 8) { %>
+        <li>
+            <div style="padding:6px 10px;width: 100%">
+                <% if (dataArr[i].type == 4) { %>
+                <p class="app-notification__message">
+                    <i class="fa fa-envelope" style="font-size: 13px;color:#00635a"></i>
+                    <a style="text-decoration: underline;word-wrap: break-word;word-break:break-all;margin-left: 4px" target="_blank" href="@@HOSTview/store/goods.html?warn=1"><%= dataArr[i].title %><span style="color:red">【<%= dataArr[i].cnt %>条】</span></a>
+                </p>
+                <% }else if(dataArr[i].type == 6){ %>
+                <p class="app-notification__message">
+                    <i class="fa fa-envelope" style="font-size: 13px;color:#00635a"></i>
+                    <a style="text-decoration: underline;word-wrap: break-word;word-break:break-all;margin-left: 4px" target="_blank" href="@@HOSTview/store/afterSale.html?warn=1"><%= dataArr[i].title %><span style="color:red">【<%= dataArr[i].cnt %>条】</span></a>
+                </p>
+                <% }else if(dataArr[i].type == 7){ %>
+                <p class="app-notification__message">
+                    <i class="fa fa-envelope" style="font-size: 13px;color:#00635a"></i>
+                    <a style="text-decoration: underline;word-wrap: break-word;word-break:break-all;margin-left: 4px" target="_blank" href="@@HOSTview/store/userCashOutRequest.html"><%= dataArr[i].title %><span style="color:red">【<%= dataArr[i].cnt %>条】</span></a>
+                </p>
+                <% }else if(dataArr[i].type == 8){ %>
+                <p class="app-notification__message">
+                    <i class="fa fa-envelope" style="font-size: 13px;color:#00635a"></i>
+                    <a style="text-decoration: underline;word-wrap: break-word;word-break:break-all;margin-left: 4px" target="_blank" href="@@HOSTview/store/order.html?warn=1"><%= dataArr[i].title %><span style="color:red">【<%= dataArr[i].cnt %>个】</span></a>
+                </p>
+                <% }else{ %>
+                <p class="app-notification__message" style="word-wrap: break-word;word-break:break-all"><i class="fa fa-envelope" style="font-size: 13px;color:#00635a;margin-right: 4px"></i><%= dataArr[i].title %><span style="color:red">【<%= dataArr[i].cnt %>人】</span></p>
+                <% } %>
+            </div>
+        </li>
+        <% } %>
+        <% } %>
+    </div>
+    <% } else { %>
+    <li class="app-notification__title">暂无警告信息</li>
+    <% } %>
+</script>

@@ -1,0 +1,235 @@
+@@include('../../inc-header.html', {"title": "现金券管理"})
+@@include('../../top-nav.html')
+@@include('../../left-nav.html')
+<main class="app-content">
+    <div class="app-title">
+        <div>
+            <h1><i class="fa fa-th-list"></i> 现金券管理</h1>
+        </div>
+        <ul class="app-breadcrumb breadcrumb side">
+            <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
+            <li class="breadcrumb-item">Tables</li>
+            <li class="breadcrumb-item active"><a href="#">现金券管理</a></li>
+        </ul>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="tile">
+                <div class="row" style="margin-bottom:20px ">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
+                        <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                            <input type="text" class="form-control" id="searchCont" autocomplete="off" style="width:60%">
+                            <button class="btn btn-secondary" type="button" id="selectsearchlabel">标题</button>
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-primary dropdown-toggle" id="btnGroupDrop1" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item searchlabel" href="#">标题</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="btn-group" style="margin-left:1%">
+                            <div id="search" class="btn btn-primary" style="outline:none">提交搜索</div>
+                        </div>
+                        <div class="btn-group" style="float:right">
+                            <button id="addModal" class="btn btn-primary" data-toggle="modal" data-target="#myModal" style="outline:none;margin-left: 3px">新增</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="tile-body">
+                    <div class="table-responsive" style="min-height: 300px">
+                        <table class="table table-hover table-bordered" id="sampleTable"></table>
+                        <div id="visaPagination" class="d-flex justify-content-end">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<script id="downloadItem" type="text/html">
+    <a href="<%= dataArr.url %>" download="">点击下载</a>
+</script>
+<script id="downloadItemTest" type="text/html">
+    <a href="<%= dataArr.url %>" target="_blank">
+        <img src="<%= dataArr.url %>">
+    </a>
+</script>
+<!-- 列表模板 -->
+<script id="visaListItem" type="text/html">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th style="width:15%;word-wrap: break-word;word-break:break-all;">标题</th>
+        <th>面值</th>
+        <th>banner图</th>
+        <th>开始时间</th>
+        <th>结束时间</th>
+        <th>剩余数/总数</th>
+        <th class="em-min-7">
+            <div class="dropdown">
+                <span class="dropdown-toggle" id="dropStatus" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <%= statusText %>
+                </span>
+                <div class="dropdown-menu" aria-labelledby="dropdownVisaStatus" id="dropStatusOptions">
+                    <a class="dropdown-item" href="javascript:" data-id="">所有</a>
+                    <a class="dropdown-item" href="javascript:" data-id="1">未启用</a>
+                    <a class="dropdown-item" href="javascript:" data-id="2">启用</a>
+                    <a class="dropdown-item" href="javascript:" data-id="3">停止</a>
+                    <a class="dropdown-item" href="javascript:" data-id="4">删除</a>
+                </div>
+            </div>
+        </th>
+        <th style="width: 195px">操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% if (dataArr.length > 0) { %>
+    <% for (var i = 0; i < dataArr.length; i++) { %>
+    <tr data-id="<%= dataArr[i].id %>">
+        <td><%= dataArr[i].id %></td>
+        <td style="width:15%;word-wrap: break-word;word-break:break-all;"><%= dataArr[i].title %></td>
+        <td>
+            <% if(dataArr[i].money){ %>
+            <%= dataArr[i].money %>元
+            <% } %>
+        </td>
+        <td>
+            <% if(dataArr[i].picUrl){ %>
+            <a href="<%= dataArr[i].picUrl %>" target="_blank">
+                <img src="<%= dataArr[i].picUrl %>" style="display: inline-block;width:100px;height: 50px">
+            </a>
+            <% } %>
+        </td>
+        <td><%= dataArr[i].startTime %></td>
+        <td><%= dataArr[i].endTime %></td>
+        <!--<td><%= dataArr[i].num %></td>-->
+        <td><%= dataArr[i].remainNumber %> / <%= dataArr[i].num %></td>
+        <td><%- dataArr[i].statusText %></td>
+        <td>
+            <div class="d-flex flex-wrap justify-content-center">
+                <%- dataArr[i].materialButtonGroup %>
+            </div>
+        </td>
+    </tr>
+    <% } %>
+    <% } else { %>
+    <tr>
+        <td colspan="8">没有符合条件的记录</td>
+    </tr>
+    <% } %>
+    </tbody>
+</script>
+<!-- 会员领取日志模板 -->
+<script id="userLogList" type="text/html">
+    <table class="table table-hover table-bordered" id="userLogTable">
+        <thead>
+        <tr>
+            <th>会员昵称</th>
+            <th style="width:25%;word-wrap: break-word;word-break:break-all;">现金券标题</th>
+            <th>现金券面值</th>
+            <th>领取时间</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% if (dataArr.length > 0) { %>
+        <% for (var i = 0; i < dataArr.length; i++) { %>
+        <tr>
+            <td>
+                <a style="text-decoration: underline" target="_blank" href="@@HOSTview/account/userDetailsLook.html?id=<%= dataArr[i].userId %>"><%= dataArr[i].nickName %></a>
+            </td>
+            <td style="width:25%;word-wrap: break-word;word-break:break-all;"><%= dataArr[i].couponTitle %></td>
+            <td>
+                <% if(dataArr[i].money){ %>
+                <%= dataArr[i].money %>元
+                <% } %>
+            </td>
+            <td><%= dataArr[i].createTime %></td>
+        </tr>
+        <% } %>
+        <% } else { %>
+        <tr>
+            <td colspan="8">没有符合条件的记录</td>
+        </tr>
+        <% } %>
+        </tbody>
+    </table>
+    <div id="userLogPagination" class="d-flex justify-content-end"></div>
+</script>
+<!--Modal新增,编辑，查看-->
+<script id="modalDiv" type="text/html">
+    <form id="visaPassportForm" disabled="true">
+        <fieldset>
+            <input type="hidden" name="id" value="<%= dataArr.id %>">
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">标题</span>
+                        </div>
+                        <input type="text" name="title" placeholder="请输入标题" value="<%= dataArr.title %>" class="form-control" required>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-6">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">面值</span>
+                        </div>
+                        <input type="text" name="money" placeholder="请输入面值" value="<%= dataArr.money %>" class="form-control" required>
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">元</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">数量</span>
+                        </div>
+                        <input type="text" name="num" placeholder="请输入数量" value="<%= dataArr.num %>" class="form-control" required>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-6">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">开始时间</span>
+                        </div>
+                        <input type="text" autocomplete="off" name="startTime" value="<%= dataArr.startTime %>"  onclick="laydate({istime: false, format: 'YYYY-MM-DD hh:mm:ss'})" placeholder="请选择开始时间..." class="form-control" required>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">结束时间</span>
+                        </div>
+                        <input type="text" autocomplete="off" name="endTime" value="<%= dataArr.endTime %>"  onclick="laydate({istime: false, format: 'YYYY-MM-DD hh:mm:ss'})" placeholder="请选择结束时间..." class="form-control" required>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row uploadFile" style="margin-bottom: 15px">
+                <div class="input-group">
+                    <span style="margin-top:6px;margin-right: 10px">上传banner图</span>
+                    <label class="file-label btn btn-primary mb-0 mr-2"><input type="file" name="avatar" class="uploadImg d-none">选择图片文件</label>
+                    <button type="button" class="btn btn-default avatarUpload" disabled>上传文件</button>
+                    <span class="temporaryFile" style="display: none"></span>
+                    <% if (dataArr.picUrl) { %>
+                    <h6 style="margin-left: 10px;margin-bottom: 0" class="imgUrl">
+                        <a target='_blank' href='<%= dataArr.picUrl %>'>
+                            <img style="display: inline-block;width: 65px;height: 35px" src="<%= dataArr.picUrl %>">
+                        </a>
+                    </h6>
+                    <% } else { %>
+                    <h6 style="margin-top: 9px;margin-left: 10px" class="imgUrl"><span style="color:red">暂无banner图</span></h6>
+                    <% } %>
+                    <!--<h6 style="color: red;margin-top: 9px;margin-left: 10px">（提示：上传的商品封面图的尺寸为315×214或者787×399）</h6>-->
+                    <input type="hidden" name="picUrl" value="<%= dataArr.picUrl %>">
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</script>
+<script data-main="/public/js/module/store/mallCashCoupon"></script>
+@@include('../../inc-footer.html')

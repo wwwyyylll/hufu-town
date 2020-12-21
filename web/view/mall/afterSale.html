@@ -1,0 +1,266 @@
+@@include('../../inc-header.html', {"title": "售后管理"})
+@@include('../../top-nav.html')
+@@include('../../left-nav.html')
+<main class="app-content">
+    <div class="app-title">
+        <div>
+            <h1><i class="fa fa-th-list"></i> 售后管理</h1>
+        </div>
+        <ul class="app-breadcrumb breadcrumb side">
+            <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
+            <li class="breadcrumb-item">Tables</li>
+            <li class="breadcrumb-item active"><a href="#">售后管理</a></li>
+        </ul>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="tile">
+                <div class="row" style="margin-bottom:20px ">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
+                        <div class="btn-group economy-wards" role="group" aria-label="Button group with nested dropdown">
+                            <input type="text" class="form-control" id="searchCont" autocomplete="off" style="width:60%">
+                            <button class="btn btn-secondary" type="button" id="selectsearchlabel">订单号</button>
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-primary dropdown-toggle" id="btnGroupDrop1" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item searchlabel" href="#">订单号</a>
+                                    <a class="dropdown-item searchlabel" href="#">用户昵称</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="btn-group" style="margin-left:1%">
+                            <div id="search" class="btn btn-primary" style="outline:none">提交搜索</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tile-body">
+                    <div class="table-responsive" style="min-height: 300px">
+                        <table class="table table-hover table-bordered" id="sampleTable"></table>
+                        <div id="visaPagination" class="d-flex justify-content-end">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<!-- 退款申请 Modal-->
+<script id="refundModal" type="text/html">
+    <form id="refundForm" disabled="true">
+        <fieldset>
+            <input type="hidden" name="orderId" value="<%= dataArr.id %>">
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">订单ID</span>
+                        </div>
+                        <input disabled type="text" value="<%= dataArr.id %>" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">订单号</span>
+                        </div>
+                        <input disabled type="text" value="<%= dataArr.orderNo %>" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">实付款</span>
+                        </div>
+                        <input disabled type="text" value="<%= dataArr.amount %>" class="form-control">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">元</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">退款金额</span>
+                        </div>
+                        <input type="text" name="amount" placeholder="请输入退款金额" value="<%= dataArr.amount %>" class="form-control" required>
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">元</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">退款数量</span>
+                        </div>
+                        <input type="text" name="num" placeholder="请输入退款数量" value="<%= dataArr.num %>" class="form-control" required>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">退款原因</span>
+                        </div>
+                        <input type="text" name="reason" placeholder="请输入退款原因" value="<%= dataArr.reason %>" class="form-control" required>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</script>
+<!-- 列表模板 -->
+<script id="visaListItem" type="text/html">
+    <thead>
+    <tr>
+        <th>订单号</th>
+        <th>用户昵称</th>
+        <th>用户未读消息数</th>
+        <th>客服未读消息数</th>
+        <th>最后回复时间</th>
+        <th>创建时间</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% if (dataArr.length > 0) { %>
+    <% for (var i = 0; i < dataArr.length; i++) { %>
+    <tr data-id="<%= dataArr[i].id %>">
+        <td>
+            <a style="text-decoration: underline" target="_blank" href="@@HOSTview/mall/orderDetails.html?orderNo=<%= dataArr[i].orderNo %>"><%= dataArr[i].orderNo %></a>
+            <span class="orderId" style="display: none"><%= dataArr[i].orderId %></span>
+            <div style="color: red"><%= dataArr[i].requestMemo %></div>
+        </td>
+        <td>
+            <a style="text-decoration: underline" target="_blank" href="@@HOSTview/account/userDetails.html?id=<%= dataArr[i].createrArr.id %>"><%= dataArr[i].createrArr.nickName %></a>
+        </td>
+        <td><%= dataArr[i].createrUnreadMessageCount %></td>
+        <td><%= dataArr[i].joinerUnreadMessageCount %></td>
+        <td><%= dataArr[i].lastUpdateTime %></td>
+        <td>
+            <%= dataArr[i].createTime %>
+            <span style="display: none"><%= dataArr[i].actualTotalAmount %></span>
+            <span style="display: none"><%= dataArr[i].num %></span>
+        </td>
+        <td>
+            <div class="d-flex flex-wrap justify-content-center">
+                <%- dataArr[i].materialButtonGroup %>
+            </div>
+        </td>
+    </tr>
+    <% } %>
+    <% } else { %>
+    <tr>
+        <td colspan="8">没有符合条件的记录</td>
+    </tr>
+    <% } %>
+    </tbody>
+</script>
+<!--Modal查看-->
+<script id="modalDiv" type="text/html">
+    <!-- 大图显示 -->
+    <img class="bigImg" src="" style="display: none;width: 550px;height: 400px;position: absolute;left: -25px;top: 0;right: 0;bottom: 0;margin: 0 auto;">
+    <div class="form-row" style="margin-bottom: 15px;">
+        <div style="float: left">
+            <% if(orderArr.coverImg){ %>
+            <img src="<%= orderArr.coverImg %>" style="display: inline-block;width: 100px;height:100px;">
+            <% }else{ %>
+            <img src="http://xn--0zwv61a3umlc.xn--tfr330an9v.com/public/img/background/newlist-header.png" style="display: inline-block;width: 100px;height:100px;">
+            <% } %>
+        </div>
+        <div style="float: left;width: 75%;">
+            <div style="height: 46px;padding: 10px;">
+                <a style="text-decoration: underline" target="_blank" href="@@HOSTview/mall/look.html?id=<%= orderArr.goodsId %>">  <%= orderArr.goodsTitle %></a>
+            </div>
+            <div style="height: 50px;padding: 10px">
+                <div style="float: left;width: 90%"><%= orderArr.specsTitle %></div>
+                <div style="float: right;margin-top: 22px">×<%= orderArr.num %></div>
+            </div>
+        </div>
+        <div style="margin-top: 10px;width: 100%;">
+            <div style="float: left;width:100px">订单编号</div>
+            <div class="orderNo" style="float: right;width:75%;text-align: right">
+                <a style="text-decoration: underline" target="_blank" href="@@HOSTview/mall/orderDetails.html?orderNo=<%= orderArr.orderNo %>">
+                    <%= orderArr.orderNo %>
+                </a>
+                <% if(orderArr.requestMemo!=''){ %>
+                <span style="color: red">（<%= orderArr.requestMemo %>）</span>
+                <% } %>
+            </div>
+        </div>
+    </div>
+    <div class="form-row" style="margin-bottom: 15px;border-bottom: 1px dashed gray"></div>
+    <div id="dialogueBox" style="max-height: 400px;overflow-y: scroll;overflow-x: hidden;margin-bottom: 15px">
+        <% for(var i=0;i < messageArr.length;i++){ %>
+        <% if(messageArr[i].isSelf==1){ %>
+        <div class="form-row" style="background: #eeeeee">
+            <div style="float: left;margin-right: 10px;padding-top: 15px;padding-left: 15px">
+                <img src="<%= messageArr[i].senderArr.avatar %>" style="display: inline-block;width: 35px;height:35px;border: 1px solid gray;border-radius: 50%">
+            </div>
+            <div style="float: left;max-width:65%;padding-top: 15px">
+                <div style="font-size: 15px;margin-bottom: 5px"><%= messageArr[i].senderArr.name %><span style="color: #0088cc">（<%= messageArr[i].senderArr.operatorName %>）</span></div>
+                <div style="background: #ffffff;margin-bottom: 8px;padding: 10px">
+                    <% if(messageArr[i].isImage==1){ %>
+                    <img class="smallImg" data-operate="bigImg" src="<%= messageArr[i].content %>" style="display: inline-block;width: <%= messageArr[i].width %>px;height:<%= messageArr[i].height %>px;">
+                    <% }else{ %>
+                    <%= messageArr[i].content %>
+                    <% }%>
+                </div>
+                <div style="color: gray;margin-bottom: 25px;font-size: 13px"><%= messageArr[i].createTime %></div>
+            </div>
+        </div>
+        <% }else{ %>
+        <div class="form-row" style="background: #eeeeee">
+            <div style="float: right;width:65%;padding-top: 15px;margin-left: 90px">
+                <div style="font-size: 15px;margin-bottom: 5px;text-align: right"><%= messageArr[i].senderArr.name %></div>
+
+                          <% if(messageArr[i].isImage==1){ %>
+                <div style="margin-bottom: 8px;height:<%= messageArr[i].divHeight %>px;">
+                    <div style="float: right;background: lightgoldenrodyellow;display:inline-block;max-width: 65%;text-align: right;padding: 10px;">
+                             <img class="smallImg" data-operate="bigImg" src="<%= messageArr[i].content %>" style="display: inline-block;width: <%= messageArr[i].width %>px;height:<%= messageArr[i].height %>px;">
+                    </div>
+                </div>
+                          <% }else{ %>
+                <div style="margin-bottom: 8px;height: 41px">
+                    <div style="float: right;background: lightgoldenrodyellow;display:inline-block;max-width: 65%;text-align: right;padding: 10px;">
+                             <%= messageArr[i].content %>
+                    </div>
+                </div>
+                          <% }%>
+
+                <div style="color: gray;margin-bottom: 25px;font-size: 13px;text-align: right"><%= messageArr[i].createTime %></div>
+            </div>
+            <div style="float: right;margin-right: 10px;padding-top: 15px;padding-left: 15px">
+                <img src="<%= messageArr[i].senderArr.avatar %>" style="display: inline-block;width: 35px;height:35px;border: 1px solid gray;border-radius: 50%">
+            </div>
+        </div>
+        <% } %>
+        <% } %>
+    </div>
+    <div class="form-row">
+        <div style="width:81%;height:45px;position: relative;margin-right: 2%;margin-left: 5px">
+            <input type="text" class="form-control content" style="position: absolute;left:0;top:0;width:100%;height: 100%">
+            <span style="position: absolute;right:5px;top:5px;width:40px;height: 80%;line-height: 36px;text-align: center;font-size: 20px">
+                <label class="file-label mb-0 mr-2" style="cursor: pointer">
+                    <i class="fa fa-camera"></i>
+                    <input type="file" name="avatar" class="uploadImg d-none">
+                </label>
+                 <span class="temporaryFile" style="display: none"></span>
+            </span>
+        </div>
+        <div style="width:15%;height:45px">
+            <button class="btn btn-primary" data-operate="send" style="height: 90%">发 送</button>
+        </div>
+    </div>
+</script>
+<script data-main="/public/js/module/mall/afterSale"></script>
+@@include('../../inc-footer.html')

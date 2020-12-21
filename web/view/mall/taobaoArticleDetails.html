@@ -1,0 +1,142 @@
+@@include('../../inc-header.html', {"title": "软文详情"})
+@@include('../../top-nav.html')
+@@include('../../left-nav.html')
+<main class="app-content">
+    <div class="app-title">
+        <div>
+            <h1><i class="fa fa-th-list"></i> 软文详情</h1>
+        </div>
+        <ul class="app-breadcrumb breadcrumb side">
+            <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
+            <li class="breadcrumb-item">Tables</li>
+            <li class="breadcrumb-item active"><a href="#">软文详情</a></li>
+        </ul>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="tile">
+                <div class="tile-body">
+                    <div id="basicMessage"></div>
+                    <div class="row" style="margin-top: 10px">
+                        <!--数据表格modelBuilder.js-->
+                        <div class="col-lg-12" style="width: 97%">
+                                <ul class="nav nav-tabs">
+                                    <li class="active titleName" style="height: 28px">
+                                        <a href="#qh1" id="headerTab1" data-toggle="tab" style="outline:none;cursor: pointer">支持CSS</a>
+                                    </li>
+                                    <li class="active" style="height: 28px">
+                                        <a href="#qh2" id="headerTab2" data-toggle="tab" style="outline:none;cursor: pointer;color: orange">不支持CSS</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content" id="tabContent"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<!--软文基本信息模板-->
+<script id="basicList" type="text/html">
+    <div style="padding: 20px; border: 1px solid lightgray;background: #f2f2f2;margin-bottom: 30px;">
+        <div class="row" style="margin-bottom: 20px">
+            <div class="col-10">
+                <div class="row" style="margin-bottom: 20px">
+                    <div class="col-4">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">ID</span>
+                            </div>
+                            <input name="id" type="text" value="<%= dataArr.id %>" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">日期</span>
+                            </div>
+                            <input type="text" value="<%= dataArr.date %>" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">类型</span>
+                            </div>
+                            <input type="text" value="<%= dataArr.typeText %>" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="margin-bottom: 20px">
+                    <div class="col-12">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">标题</span>
+                            </div>
+                            <input type="text" value="<%= dataArr.title %>" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="margin-bottom: 20px">
+                    <div class="col-4">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">最后更新时间</span>
+                            </div>
+                            <input type="text" value="<%= dataArr.updateTime %>" class="form-control">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<!--  支持CSS信息模板 -->
+<script id="supportCssList" type="text/html">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="tile" style="background: #eeeeee">
+                <div class="tile-body">
+                    <div class="form-row" style="padding-left: 5px;margin-bottom: 15px">
+                        <button class="btn btn-primary" data-operate="preview">预览效果</button>
+                    </div>
+                    <div class="form-row" style="margin-bottom: 15px">
+                        <div class="col-12">
+                            <div class="editorDiv"></div>
+                            <textarea style="resize:vertical;min-height: 600px" class="form-control" name="cssHtml" required><%= dataArr.cssHtml %></textarea>
+                        </div>
+                    </div>
+                    <div class="form-row" style="padding-left: 5px">
+                        <button class="btn btn-success" data-id="1" data-operate="saveArticle">保存代码</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<!-- 不支持CSS信息模板 -->
+<script id="noSupportCssList" type="text/html">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="tile" style="background: #eeeeee">
+                <div class="tile-body">
+                    <div class="form-row" style="margin-bottom: 15px;padding-left: 5px">
+                        <button class="btn btn-primary" data-operate="preview">预览效果</button>
+                        <button class="btn btn-primary" data-operate="previewPwd" style="margin-left: 10px">预览效果（无淘口令）</button>
+                    </div>
+                    <div class="form-row" style="margin-bottom: 15px">
+                        <div class="col-12">
+                            <div class="editorDiv"></div>
+                            <textarea style="resize:vertical;min-height: 600px" class="form-control" name="cssHtml" required><%= dataArr.noCssHtml %></textarea>
+                        </div>
+                    </div>
+                    <div class="form-row" style="padding-left: 5px">
+                        <button class="btn btn-success" data-id="2" data-operate="saveArticle">保存代码</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<script data-main="/public/js/module/mall/taobaoArticleDetails"></script>
+@@include('../../inc-footer.html')

@@ -1,0 +1,25 @@
+@@include('../../inc-header.html', {"title": "商品编辑"})
+@@include('../../top-nav.html')
+@@include('../../left-nav.html')
+<main class="app-content">
+    <div class="app-title">
+        <div>
+            <h1><i class="fa fa-th-list"></i> 商品编辑</h1>
+        </div>
+        <ul class="app-breadcrumb breadcrumb side">
+            <li class="breadcrumb-item" style="line-height: 37px"><i class="fa fa-home fa-lg"></i></li>
+            <li class="breadcrumb-item" style="line-height: 37px">Tables</li>
+            <li class="breadcrumb-item active" style="line-height: 37px"><a href="@@HOSTview/mall/goods.html">返回商品管理</a></li>
+        </ul>
+    </div>
+    <form class="needs-validation" id="goodsForm"></form>
+</main>
+
+@@include('template.html')
+
+<script data-main="/public/js/module/mall/edit"></script>
+<script type="text/javascript" src="/public/js/plugins/wangeditor/release/wangEditor.min.js"></script>
+<script type="text/javascript" src="/public/js/plugins/clipboard.min.js"></script>
+@@include('../../inc-footer.html')
+<!-- 注意， 只需要引用 JS，无需引用任何 CSS ！！！-->
+<script type="text/javascript" src="/public/js/plugins/jquery-ui-1.10.4.min.js"></script>

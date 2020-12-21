@@ -1,0 +1,590 @@
+<!-- 商品三大模块信息（基本信息 + 规格信息 + 轮播图信息）-->
+<script id="goodsFormContent" type="text/html">
+    <fieldset>
+        <input type="hidden" name="id" value="<%= dataArr.id %>">
+        <!-- 商品基本信息-->
+        <div class="goodsSeparated">
+            <h5 style="margin-bottom: 15px">商品基本信息&nbsp;  <% if(dataArr.id){ %> (<%- dataArr.statusText %>)<% } %>&nbsp;&nbsp;&nbsp;
+                <button class="btn btn-primary saveButton" type="button" data-operate="addGoods">保存</button>
+                <% if(dataArr.id){ %>
+                <span style="background: #1ab394;cursor: pointer;border-color: #1ab394;color:#ffffff;padding: 11px 15px;font-size: 14px;border-radius: 3px" data-clipboard-text="<%= dataArr.previewUrl %>" class="copyBtn">预览</span>
+                <% } %>
+            </h5>
+            <div class="form-row" style="margin-bottom: 15px">
+                <% if(dataArr.id){ %>
+                <div class="col-2">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">ID</span>
+                        </div>
+                        <input disabled type="text" value="<%= dataArr.id %>" class="form-control">
+                    </div>
+                </div>
+                <% } %>
+                <div class="col-8">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">标题</span>
+                        </div>
+                        <input type="text" name="title" placeholder="请输入标题" value="<%= dataArr.title %>" class="form-control" required>
+                    </div>
+                </div>
+                <div class="col-2">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">排序</span>
+                        </div>
+                        <input type="text" name="sort" placeholder="请输入排序" value="<%= dataArr.sort %>" class="form-control" required>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-3">
+                    <div class="input-group economy-wards">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">供应商</span>
+                        </div>
+                        <input type="hidden" class="supplierId" name="supplierId" value="<%= dataArr.supplierId %>">
+                        <input type="text" class="form-control supplierName" placeholder="请输入供应商关键词" value="<%= dataArr.supplierName %>" required>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="input-group economy-wards">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">分类</span>
+                        </div>
+                        <input type="hidden" class="categoryId" name="categoryId" value="<%= dataArr.categoryId %>">
+                        <input type="text" class="form-control categoryName" placeholder="请输入分类关键词" value="<%= dataArr.categoryName %>" required>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">标签1</span>
+                        </div>
+                        <select name="tag1" class="form-control">
+                            <option value="0">不显示</option>
+                            <% for (var i = 0; i < tagArr.length; i++) { %>
+                            <option value="<%= tagArr[i].id %>" <% if(dataArr.tag1==tagArr[i].id) { %> selected <% } %>><%= tagArr[i].name %></option>
+                            <% }%>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">标签2</span>
+                        </div>
+                        <select name="tag2" class="form-control">
+                            <option value="0">不显示</option>
+                            <% for (var i = 0; i < tagArr.length; i++) { %>
+                            <option value="<%= tagArr[i].id %>" <% if(dataArr.tag2==tagArr[i].id) { %> selected <% } %>><%= tagArr[i].name %></option>
+                            <% }%>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row uploadFile">
+                <div class="input-group">
+                    <span style="margin-top:6px;margin-right: 10px">上传封面图</span>
+                    <label class="file-label btn btn-primary mb-0 mr-2"><input type="file" name="avatar" class="uploadImg d-none">选择图片文件</label>
+                    <button type="button" class="btn btn-default avatarUpload" disabled>上传文件</button>
+                    <span class="temporaryFile" style="display: none"></span>
+                    <% if (dataArr.coverImg) { %>
+                    <h6 style="margin-left: 10px;margin-bottom: 0" class="imgUrl">
+                        <a target='_blank' href='<%= dataArr.coverImg %>'>
+                            <img style="display: inline-block;width: 65px;height: 35px" src="<%= dataArr.coverImg %>">
+                        </a>
+                    </h6>
+                    </h6>
+                    <% } else { %>
+                    <h6 style="margin-top: 9px;margin-left: 10px" class="imgUrl"><span style="color:red">暂无封面图</span></h6>
+                    <% } %>
+                    <h6 style="color: red;margin-top: 9px;margin-left: 10px">（提示：上传的商品封面图的尺寸为315×214或者787×399）</h6>
+                    <input type="hidden" name="coverImg" value="<%= dataArr.coverImg %>">
+                </div>
+            </div>
+        </div>
+        <!--<div class="row">-->
+            <!--<div class="col-md-12">-->
+                <!--<div class="tile">-->
+                    <div class="tile-body">
+                        <div id="basicMessage"></div>
+                        <div class="row" style="margin-top: 10px">
+                            <!--数据表格modelBuilder.js-->
+                            <div class="col-lg-12" style="width: 97%">
+                                <ul class="nav nav-tabs" style="height: 50px">
+                                    <li class="active" style="height: 28px">
+                                        <a href="#qh3" id="headerTab3" data-toggle="tab" style="outline:none;color: orange;background: #ffffff;display: inline-block;height: 50px;font-size: 18px;cursor: pointer">商品介绍</a>
+                                    </li>
+                                    <li class="active" style="height: 28px">
+                                        <a href="#qh1" id="headerTab1" data-toggle="tab" style="outline:none;background: #ffffff;display: inline-block;height: 50px;font-size: 18px;cursor: pointer">商品规格信息</a>
+                                    </li>
+                                    <li class="active" style="height: 28px">
+                                        <a href="#qh2" id="headerTab2" data-toggle="tab" style="outline:none;background: #ffffff;display: inline-block;height: 50px;font-size: 18px;cursor: pointer">商品轮播图信息</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content" id="tabContent3">
+                                    <div class="goodsSeparated">
+                                        <div class="form-row" style="margin-bottom: 15px">
+                                            <div class="col-12">
+                                                <div id="editor"></div>
+                                                <input type="hidden" name="details" value="<%= dataArr.details %>">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-content" id="tabContent1"  style="display: none"></div>
+                                <div class="tab-content" id="tabContent2" style="display: none"></div>
+                            </div>
+                        </div>
+                    </div>
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+    </fieldset>
+</script>
+<!-- 规格信息List模板Modal-->
+<script id="specList" type="text/html">
+    <div id="delSpecArr"></div>
+    <div class="goodsSeparated specDiv">
+        <div class="form-row" style="margin-bottom: 15px">
+            <div class="col-8">
+                <button class="btn btn-primary" type="button" data-operate="addSpec" style="float: left">添加规格</button>
+            </div>
+        </div>
+        <% for (var i = 0; i < specsArr.length; i++) { %>
+        <div class="goodsItemSeparated specItem">
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-4">
+                    <h6>规格<span class="specNumber"><%= i+1 %></span></h6>
+                </div>
+                <div class="col-8">
+                    <span data-operate="delSpec" style="float: right;cursor: pointer" ><i class="icon fa fa-close"></i></span>
+                </div>
+            </div>
+            <input type="hidden" name="specsArr[][id]" class="specItemId" value="<%= specsArr[i].id %>">
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">标题</span>
+                        </div>
+                        <input type="text" name="specsArr[][title]" placeholder="请输入名称" value="<%= specsArr[i].title %>" class="form-control" required>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-3">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">原价</span>
+                        </div>
+                        <input type="text" name="specsArr[][originalPrice]" placeholder="请输入原价" value="<%= specsArr[i].originalPrice %>" class="form-control" required>
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">元</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" style="color: red">团购价</span>
+                        </div>
+                        <input type="text" name="specsArr[][promotionPrice]" placeholder="请输入团购价" value="<%= specsArr[i].promotionPrice %>" class="form-control" required>
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">元</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">配送范围</span>
+                        </div>
+                        <select name="specsArr[][expressFeeId]" class="form-control">
+                            <option value="0">请选择</option>
+                            <% for (var m = 0; m < exoressArr.length; m++) { %>
+                            <option value="<%= exoressArr[m].id %>" <% if(specsArr[i].expressFeeId==exoressArr[m].id) { %> selected <% } %>><%= exoressArr[m].title %></option>
+                            <% }%>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-3" style="display: none">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">快递费是否叠加</span>
+                        </div>
+                        <select name="specsArr[][isExpressFeeSuperposition]" class="form-control">
+                            <option value="2">否</option>
+                            <option value="1">是</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-3">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">抵扣能量</span>
+                        </div>
+                        <input type="text" name="specsArr[][deductionThinkingEnergy]" placeholder="请输入抵扣能量" value="<%= specsArr[i].deductionThinkingEnergy %>" class="form-control" required>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">库存</span>
+                        </div>
+                        <input type="text" name="specsArr[][stock]" placeholder="请输入库存" value="<%= specsArr[i].stock %>" class="form-control" required>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">发货时间</span>
+                        </div>
+                        <select name="specsArr[][deliveryTime]" class="form-control">
+                            <% for (var k = 0; k < deliveryTimeArr.length; k++) { %>
+                            <option value="<%= deliveryTimeArr[k].val %>" <% if(specsArr[i].deliveryTime==deliveryTimeArr[k].val) { %> selected <% } %>><%= deliveryTimeArr[k].name %></option>
+                            <% }%>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-6">
+                    <div class="form-row uploadFile">
+                        <div class="input-group">
+                            <span style="margin-top:6px;margin-right: 10px">上传图片</span>
+                            <label class="file-label btn btn-primary mb-0 mr-2"><input type="file" name="avatar" class="uploadImg d-none">选择图片文件</label>
+                            <button type="button" class="btn btn-default avatarUpload" disabled>上传文件</button>
+                            <span class="temporaryFile" style="display: none"></span>
+                            <% if (specsArr[i].pic) { %>
+                            <h6 style="margin-left: 10px;margin-bottom: 0" class="imgUrl">
+                                <a target='_blank' href='<%= specsArr[i].pic %>'>
+                                    <img style="display: inline-block;width: 65px;height: 35px" src="<%= specsArr[i].pic %>">
+                                </a>
+                            </h6>
+                            <% } else { %>
+                            <h6 style="margin-top: 9px;margin-left: 10px" class="imgUrl"><span style="color:red">暂无图片</span></h6>
+                            <% } %>
+                            <h6 style="color: red;margin-top: 9px;margin-left: 10px">（提示：上传的商品规格图的尺寸为216×216）</h6>
+                            <input type="hidden" name="specsArr[][pic]" value="<%= specsArr[i].pic %>">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px;display: none">
+                <div class="col-6">
+                    <div class="form-row uploadFile">
+                        <div class="input-group">
+                            <span style="margin-top:6px;margin-right: 10px">上传大图</span>
+                            <label class="file-label btn btn-primary mb-0 mr-2"><input type="file" name="avatar" class="uploadImg d-none">选择图片文件</label>
+                            <button type="button" class="btn btn-default avatarUpload" disabled>上传文件</button>
+                            <span class="temporaryFile" style="display: none"></span>
+                            <% if (specsArr[i].bigPic) { %>
+                            <h6 style="margin-left: 10px;margin-bottom: 0" class="imgUrl">
+                                <a target='_blank' href='<%= specsArr[i].bigPic %>'>
+                                    <img style="display: inline-block;width: 65px;height: 35px" src="<%= specsArr[i].bigPic %>">
+                                </a>
+                            </h6>
+                            <% } else { %>
+                            <h6 style="margin-top: 9px;margin-left: 10px" class="imgUrl"><span style="color:red">暂无大图</span></h6>
+                            <% } %>
+                            <input type="hidden" name="specsArr[][bigPic]" value="<%= specsArr[i].bigPic %>">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="form-row uploadFile">
+                        <div class="input-group">
+                            <span style="margin-top:6px;margin-right: 10px">上传小图</span>
+                            <label class="file-label btn btn-primary mb-0 mr-2"><input type="file" name="avatar" class="uploadImg d-none">选择图片文件</label>
+                            <button type="button" class="btn btn-default avatarUpload" disabled>上传文件</button>
+                            <span class="temporaryFile" style="display: none"></span>
+                            <% if (specsArr[i].smallPic) { %>
+                            <h6 style="margin-left: 10px;margin-bottom: 0" class="imgUrl">
+                                <a target='_blank' href='<%= specsArr[i].smallPic %>'>
+                                    <img style="display: inline-block;width: 65px;height: 35px" src="<%= specsArr[i].smallPic %>">
+                                </a>
+                            </h6>
+                            <% } else { %>
+                            <h6 style="margin-top: 9px;margin-left: 10px" class="imgUrl"><span style="color:red">暂无小图</span></h6>
+                            <% } %>
+                            <input type="hidden" name="specsArr[][smallPic]" value="<%= specsArr[i].smallPic %>">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <% } %>
+    </div>
+</script>
+<!-- 轮播图信息List模板Modal-->
+<script id="imgList" type="text/html">
+    <div id="delImgArr"></div>
+    <ul class="goodsSeparated imgDiv table table-bordered sortable-list connectList agile-list">
+        <div class="form-row" style="margin-bottom: 15px">
+            <div class="col-12" style="margin-left: 30px">
+                <button class="btn btn-primary" type="button" data-operate="addImg" style="float: left">添加轮播图</button>
+                <span style="display: inline-block;margin-left: 20px;margin-top: 8px;color:red">请拖动列表更换轮播图排列顺序</span>
+            </div>
+        </div>
+        <% for (var i = 0; i < imagesArr.length; i++) { %>
+        <li class="goodsItemSeparated imgItem">
+            <input type="hidden" name="imageArr[][id]" class="imgItemId" value="<%= imagesArr[i].id %>">
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-4">
+                    <h6>轮播图<span class="imgNumber"><%= i+1 %></span></h6>
+                </div>
+                <div class="col-8">
+                    <span data-operate="delImg" style="float: right;cursor: pointer" ><i class="icon fa fa-close"></i></span>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-3">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">当前排序</span>
+                        </div>
+                        <input readonly type="text" name="imageArr[][sort]" placeholder="请输入图片排序" value="<%= imagesArr[i].sort %>" class="form-control sort" required>
+                    </div>
+                </div>
+                <div class="col-6" style="margin-left: 35px">
+                    <div class="form-row uploadFile">
+                        <div class="input-group">
+                            <span style="margin-top:6px;margin-right: 10px">上传轮播图</span>
+                            <label class="file-label btn btn-primary mb-0 mr-2"><input type="file" name="avatar" class="uploadImg d-none">选择图片文件</label>
+                            <button type="button" class="btn btn-default avatarUpload" disabled>上传文件</button>
+                            <span class="temporaryFile" style="display: none"></span>
+                            <% if (imagesArr[i].pic) { %>
+                            <h6 style="margin-left: 10px;margin-bottom: 0" class="imgUrl">
+                                <a target='_blank' href='<%= imagesArr[i].pic %>'>
+                                    <img style="display: inline-block;width: 65px;height: 35px" src="<%= imagesArr[i].pic %>">
+                                </a>
+                            </h6>
+                            <% } else { %>
+                            <h6 style="margin-top: 9px;margin-left: 10px" class="imgUrl"><span style="color:red">暂无轮播图</span></h6>
+                            <% } %>
+                            <h6 style="color: red;margin-top: 9px;margin-left: 10px">（提示：上传的商品轮播图的尺寸为315×214或者787×399）</h6>
+                            <input type="hidden" name="imageArr[][url]" value="<%= imagesArr[i].pic %>">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </li>
+        <% } %>
+    </ul>
+</script>
+<!-- 规格信息item模板Modal-->
+<script id="specItem" type="text/html">
+    <div class="goodsItemSeparated specItem">
+        <div class="form-row" style="margin-bottom: 15px">
+            <div class="col-4">
+                <h6>规格<span class="specNumber"></span></h6>
+            </div>
+            <div class="col-8">
+                <span data-operate="delSpec" style="float: right;cursor: pointer" ><i class="icon fa fa-close"></i></span>
+            </div>
+        </div>
+        <input type="hidden" name="specsArr[][id]">
+        <div class="form-row" style="margin-bottom: 15px">
+            <div class="col-12">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">标题</span>
+                    </div>
+                    <input type="text" name="specsArr[][title]" placeholder="请输入名称" value="" class="form-control" required>
+                </div>
+            </div>
+        </div>
+        <div class="form-row" style="margin-bottom: 15px">
+            <div class="col-3">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">原价</span>
+                    </div>
+                    <input type="text" name="specsArr[][originalPrice]" placeholder="请输入原价" value="" class="form-control" required>
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">元</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"  style="color: red">团购价</span>
+                    </div>
+                    <input type="text" name="specsArr[][promotionPrice]" placeholder="请输入团购价" value="" class="form-control" required>
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">元</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">配送范围</span>
+                    </div>
+                    <select name="specsArr[][expressFeeId]" class="form-control">
+                        <option value="0">请选择</option>
+                        <% for (var m = 0; m < exoressArr.length; m++) { %>
+                        <option value="<%= exoressArr[m].id %>"><%= exoressArr[m].title %></option>
+                        <% }%>
+                    </select>
+                </div>
+            </div>
+            <div class="col-3" style="display: none">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">快递费是否叠加</span>
+                    </div>
+                    <select name="specsArr[][isExpressFeeSuperposition]" class="form-control">
+                        <option value="2">否</option>
+                        <option value="1">是</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="form-row" style="margin-bottom: 15px">
+            <div class="col-3">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">抵扣能量</span>
+                    </div>
+                    <input type="text" name="specsArr[][deductionThinkingEnergy]" placeholder="请输入抵扣能量" value="" class="form-control" required>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">库存</span>
+                    </div>
+                    <input type="text" name="specsArr[][stock]" placeholder="请输入库存" value="" class="form-control" required>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">发货时间</span>
+                    </div>
+                    <select name="specsArr[][deliveryTime]" class="form-control">
+                        <% for (var i = 0; i < deliveryTimeArr.length; i++) { %>
+                        <option value="<%= deliveryTimeArr[i].val %>"><%= deliveryTimeArr[i].name %></option>
+                        <% }%>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="form-row" style="margin-bottom: 15px">
+            <div class="col-6">
+                <div class="form-row uploadFile">
+                    <div class="input-group">
+                        <span style="margin-top:6px;margin-right: 10px">上传图片</span>
+                        <label class="file-label btn btn-primary mb-0 mr-2"><input type="file" name="avatar" class="uploadImg d-none">选择图片文件</label>
+                        <button type="button" class="btn btn-default avatarUpload" disabled>上传文件</button>
+                        <span class="temporaryFile" style="display: none"></span>
+                        <% if (specsArr.pic) { %>
+                        <h6 style="margin-left: 10px;margin-bottom: 0" class="imgUrl">
+                            <a target='_blank' href='<%= specsArr.pic %>'>
+                                <img style="display: inline-block;width: 65px;height: 35px" src="<%= specsArr.pic %>">
+                            </a>
+                        </h6>
+                        <% } else { %>
+                        <h6 style="margin-top: 9px;margin-left: 10px" class="imgUrl"><span style="color:red">暂无图片</span></h6>
+                        <% } %>
+                        <h6 style="color: red;margin-top: 9px;margin-left: 10px">（提示：上传的商品规格图的尺寸为216×216）</h6>
+                        <input type="hidden" name="specsArr[][pic]" value="<%= specsArr.pic %>">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-row" style="margin-bottom: 15px;display: none">
+            <div class="col-6">
+                <div class="form-row uploadFile">
+                    <div class="input-group">
+                        <span style="margin-top:6px;margin-right: 10px">上传大图</span>
+                        <label class="file-label btn btn-primary mb-0 mr-2"><input type="file" name="avatar" class="uploadImg d-none">选择图片文件</label>
+                        <button type="button" class="btn btn-default avatarUpload" disabled>上传文件</button>
+                        <span class="temporaryFile" style="display: none"></span>
+                        <% if (dataArr.bigPic) { %>
+                        <h6 style="margin-left: 10px;margin-bottom: 0" class="imgUrl">
+                            <a target='_blank' href='<%= dataArr.bigPic %>'>
+                                <img style="display: inline-block;width: 65px;height: 35px" src="<%= dataArr.bigPic %>">
+                            </a>
+                        </h6>
+                        <% } else { %>
+                        <h6 style="margin-top: 9px;margin-left: 10px" class="imgUrl"><span style="color:red">暂无大图</span></h6>
+                        <% } %>
+                        <input type="hidden" name="specsArr[][bigPic]" value="<%= dataArr.bigPic %>">
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-row uploadFile">
+                    <div class="input-group">
+                        <span style="margin-top:6px;margin-right: 10px">上传小图</span>
+                        <label class="file-label btn btn-primary mb-0 mr-2"><input type="file" name="avatar" class="uploadImg d-none">选择图片文件</label>
+                        <button type="button" class="btn btn-default avatarUpload" disabled>上传文件</button>
+                        <span class="temporaryFile" style="display: none"></span>
+                        <% if (dataArr.smallPic) { %>
+                        <h6 style="margin-left: 10px;margin-bottom: 0" class="imgUrl">
+                            <a target='_blank' href='<%= dataArr.smallPic %>'>
+                                <img style="display: inline-block;width: 65px;height: 35px" src="<%= dataArr.smallPic %>">
+                            </a>
+                        </h6>
+                        <% } else { %>
+                        <h6 style="margin-top: 9px;margin-left: 10px" class="imgUrl"><span style="color:red">暂无小图</span></h6>
+                        <% } %>
+                        <input type="hidden" name="specsArr[][smallPic]" value="<%= dataArr.smallPic %>">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<!-- 轮播图信息item模板Modal-->
+<script id="imgItem" type="text/html">
+    <li class="goodsItemSeparated imgItem">
+        <div class="form-row" style="margin-bottom: 15px">
+            <div class="col-4">
+                <h6>轮播图<span class="imgNumber">1</span></h6>
+            </div>
+            <div class="col-8">
+                <span data-operate="delImg" style="float: right;cursor: pointer" ><i class="icon fa fa-close"></i></span>
+            </div>
+        </div>
+        <div class="form-row" style="margin-bottom: 15px">
+            <div class="col-3">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">当前排序</span>
+                    </div>
+                    <input readonly type="text" name="imageArr[][sort]" placeholder="请输入图片排序" value="" class="form-control sort" required>
+                </div>
+            </div>
+            <div class="col-6" style="margin-left: 35px">
+                <div class="form-row uploadFile">
+                    <div class="input-group">
+                        <span style="margin-top:6px;margin-right: 10px">上传轮播图</span>
+                        <label class="file-label btn btn-primary mb-0 mr-2"><input type="file" name="avatar" class="uploadImg d-none">选择图片文件</label>
+                        <button type="button" class="btn btn-default avatarUpload" disabled>上传文件</button>
+                        <span class="temporaryFile" style="display: none"></span>
+                        <% if (dataArr.pic) { %>
+                        <h6 style="margin-left: 10px;margin-bottom: 0" class="imgUrl">
+                            <a target='_blank' href='<%= dataArr.pic %>'>
+                                <img style="display: inline-block;width: 65px;height: 35px" src="<%= dataArr.pic %>">
+                            </a>
+                        </h6>
+                        <% } else { %>
+                        <h6 style="margin-top: 9px;margin-left: 10px" class="imgUrl"><span style="color:red">暂无轮播图</span></h6>
+                        <% } %>
+                        <h6 style="color: red;margin-top: 9px;margin-left: 10px">（提示：上传的商品轮播图的尺寸为315×214或者787×399）</h6>
+                        <input type="hidden" name="imageArr[][url]" value="<%= dataArr.pic %>">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </li>
+</script>

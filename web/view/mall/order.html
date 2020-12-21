@@ -1,0 +1,526 @@
+@@include('../../inc-header.html', {"title": "订单管理"})
+@@include('../../top-nav.html')
+@@include('../../left-nav.html')
+<main class="app-content">
+    <div class="app-title">
+        <div>
+            <h1><i class="fa fa-th-list"></i> 订单管理</h1>
+        </div>
+        <ul class="app-breadcrumb breadcrumb side">
+            <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
+            <li class="breadcrumb-item">Tables</li>
+            <li class="breadcrumb-item active"><a href="#">订单管理</a></li>
+        </ul>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="tile">
+                <div class="row" style="margin-bottom:20px">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
+                        <div class="btn-group  economy-wards" role="group" aria-label="Button group with nested dropdown">
+                            <input type="text" class="form-control" id="searchCont" autocomplete="off" style="width:60%">
+                            <button class="btn btn-secondary" type="button" id="selectsearchlabel">订单号</button>
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-primary dropdown-toggle" id="btnGroupDrop1" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item searchlabel" href="#">订单号</a>
+                                    <a class="dropdown-item searchlabel" href="#">会员运营ID</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="btn-group" style="margin-left:5px">
+                            <div id="search" class="btn btn-primary" style="outline:none">提交搜索</div>
+                        </div>
+                        <div class="btn-group" style="margin-left:5px">
+                            <button id="exportExcel" class="btn btn-info" style="outline:none;margin-left: 3px">订单支付时间筛选</button>
+                        </div>
+                        <div class="btn-group" style="float:right;margin-right: 5px">
+                            <button id="batchImport" class="btn btn-primary" style="outline:none;margin-left: 3px">批量导入</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="margin-bottom:20px;display: none">
+                    <div class="col-auto mt-3">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">筛选</span>
+                            </div>
+                            <div class="input-group-border">
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" id="order_3" name="warnParam" class="custom-control-input" value="0" checked>
+                                    <label class="custom-control-label" for="order_3">所有订单</label>
+                                </div>
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" id="order_1" name="warnParam" class="custom-control-input" value="1">
+                                    <label class="custom-control-label" for="order_1">待联系供应商</label>
+                                </div>
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" id="order_2" name="warnParam" class="custom-control-input" value="2">
+                                    <label class="custom-control-label" for="order_2">待填快递单号</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tile-body">
+                    <div class="table-responsive" style="min-height: 300px">
+                        <table class="table table-hover table-bordered" id="sampleTable"></table>
+                        <div id="visaPagination" class="d-flex justify-content-end">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+<!--批量导入-->
+<script id="batchImportModal" type="text/html">
+    <form id="importExcelForm" disabled="true">
+        <!--<div class="form-row" style="margin-bottom: 15px">-->
+            <!--<div class="col-7">-->
+                <!--<div class="input-group">-->
+                    <!--<div class="input-group-prepend">-->
+                        <!--<span class="input-group-text">来源</span>-->
+                    <!--</div>-->
+                    <!--<select name="source" class="form-control">-->
+                        <!--<option value="">请选择</option>-->
+                        <!--<option value="1" selected>会员订单</option>-->
+                        <!--<option value="2">普通订单</option>-->
+                    <!--</select>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+        <div class="form-row uploadFileBatchDiv" style="margin-bottom: 15px">
+            <div class="col-7">
+                <div class="input-group">
+                    <span style="margin-top:6px;margin-right: 10px">上传文件</span>
+                    <label class="file-label btn btn-primary mb-0 mr-2"><input type="file" name="file" class="uploadFileBatch d-none">选择文件</label>
+                    <!--<button type="button" class="btn btn-default avatarUploadBatch" disabled>上传文件</button>-->
+                </div>
+            </div>
+        </div>
+        <div class="form-row" style="margin-bottom: 15px">
+            <div class="col-12">
+                <div class="input-group">
+                    <h6 class="imgUrl"></h6>
+                </div>
+            </div>
+        </div>
+    </form>
+</script>
+<!-- 订单支付时间筛选 -->
+<script id="exportExcelModal" type="text/html">
+    <form id="exportExcelForm" disabled="true">
+        <fieldset>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">订单支付时间</span>
+                        </div>
+                        <input autocomplete="off" type="text" name="time"  id="reservation1" class="form-control" required>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</script>
+<!-- 发货 Modal-->
+<script id="deliverModal" type="text/html">
+    <form id="deliverForm" disabled="true">
+        <fieldset>
+            <input type="hidden" name="id" value="<%= dataArr.id %>">
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">ID</span>
+                        </div>
+                        <input disabled type="text" value="<%= dataArr.id %>" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">订单号</span>
+                        </div>
+                        <input disabled type="text" value="<%= dataArr.orderNo %>" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">快递公司</span>
+                        </div>
+                        <select name="expressCompany" class="form-control" required>
+                            <option value="">请选择</option>
+                            <option value="德邦快递" <% if(dataArr.expressCompany=='德邦快递') { %> selected <% } %>>德邦快递</option>
+                            <option value="EMS"      <% if(dataArr.expressCompany=='EMS') { %> selected <% } %>>EMS</option>
+                            <option value="EMS经济快递" <% if(dataArr.expressCompany=='EMS经济快递') { %> selected <% } %>>EMS经济快递</option>
+                            <option value="快捷快递" <% if(dataArr.expressCompany=='快捷快递') { %> selected <% } %>>快捷快递</option>
+                            <option value="国通快递" <% if(dataArr.expressCompany=='国通快递') { %> selected <% } %>>国通快递</option>
+                            <option value="百世快递" <% if(dataArr.expressCompany=='百世快递') { %> selected <% } %>>百世快递</option>
+                            <option value="邮政快递包裹" <% if(dataArr.expressCompany=='邮政快递包裹') { %> selected <% } %>>邮政快递包裹</option>
+                            <option value="全峰快递" <% if(dataArr.expressCompany=='全峰快递') { %> selected <% } %>>全峰快递</option>
+                            <option value="顺丰速运" <% if(dataArr.expressCompany=='顺丰速运') { %> selected <% } %>>顺丰速运</option>
+                            <option value="申通快递" <% if(dataArr.expressCompany=='申通快递') { %> selected <% } %>>申通快递</option>
+                            <option value="天天快递" <% if(dataArr.expressCompany=='天天快递') { %> selected <% } %>>天天快递</option>
+                            <option value="优速物流" <% if(dataArr.expressCompany=='优速物流') { %> selected <% } %>>优速物流</option>
+                            <option value="圆通速递" <% if(dataArr.expressCompany=='圆通速递') { %> selected <% } %>>圆通速递</option>
+                            <option value="韵达快递" <% if(dataArr.expressCompany=='韵达快递') { %> selected <% } %>>韵达快递</option>
+                            <option value="宅急送"   <% if(dataArr.expressCompany=='宅急送') { %> selected <% } %>>宅急送</option>
+                            <option value="中通快递" <% if(dataArr.expressCompany=='中通快递') { %> selected <% } %>>中通快递</option>
+                            <option value="其它"     <% if(dataArr.expressCompany=='其它') { %> selected <% } %>>其它</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">快递单号</span>
+                        </div>
+                        <input type="text" name="expressNo" placeholder="请输入快递单号" value="<%= dataArr.expressNo %>" class="form-control" required>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</script>
+<!-- 退款申请 Modal-->
+<script id="refundModal" type="text/html">
+    <form id="refundForm" disabled="true">
+        <fieldset>
+            <input type="hidden" name="orderId" value="<%= dataArr.id %>">
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">订单ID</span>
+                        </div>
+                        <input disabled type="text" value="<%= dataArr.id %>" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">订单号</span>
+                        </div>
+                        <input disabled type="text" value="<%= dataArr.orderNo %>" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">实付款</span>
+                        </div>
+                        <input disabled type="text" value="<%= dataArr.amount %>" class="form-control">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">元</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">退款金额</span>
+                        </div>
+                        <input type="text" name="amount" placeholder="请输入退款金额" value="<%= dataArr.amount %>" class="form-control" required>
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">元</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">退款数量</span>
+                        </div>
+                        <input type="text" name="num" placeholder="请输入退款数量" value="<%= dataArr.num %>" class="form-control" required>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">退款原因</span>
+                        </div>
+                        <input type="text" name="reason" placeholder="请输入退款原因" value="<%= dataArr.reason %>" class="form-control" required>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</script>
+<!-- 接单 Modal-->
+<script id="submitSupplierModal" type="text/html">
+    <form id="submitSupplierForm" disabled="true">
+        <fieldset>
+            <input type="hidden" name="id" value="<%= dataArr.id %>">
+            <input type="hidden" name="isAccept" value="1">
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">ID</span>
+                        </div>
+                        <input disabled type="text" value="<%= dataArr.id %>" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">金额</span>
+                        </div>
+                        <input type="text" name="amount" placeholder="请输入金额" value="<%= dataArr.amount %>" class="form-control" required>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</script>
+<!-- 供应商接单 Modal-->
+<script id="supplierModal" type="text/html">
+    <form id="supplierForm" disabled="true">
+        <fieldset>
+            <input type="hidden" name="id" value="<%= dataArr.id %>">
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">ID</span>
+                        </div>
+                        <input disabled type="text" value="<%= dataArr.id %>" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">商品总价</span>
+                        </div>
+                        <input disabled type="text" value="<%= dataArr.goodsAmount %>" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">快递费</span>
+                        </div>
+                        <input disabled type="text" value="<%= dataArr.expressFee %>" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">抵扣金额</span>
+                        </div>
+                        <input disabled type="text" value="<%= dataArr.deductionPrice %>" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">总价</span>
+                        </div>
+                        <input disabled type="text" value="<%= dataArr.totalAmount %>" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" style="color: red">实付款</span>
+                        </div>
+                        <input disabled type="text" value="<%= dataArr.actualTotalAmount %>" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">购买数量</span>
+                        </div>
+                        <input disabled type="text" value="<%= dataArr.num %>" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">供应商是否接单</span>
+                        </div>
+                        <select name="isAccept" class="form-control">
+                            <option value="1">接单</option>
+                            <option value="2">不接单</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row amountDiv" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">金额</span>
+                        </div>
+                        <input type="text" name="amount" placeholder="请输入金额" value="" class="form-control amount" required>
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">元</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row reasonDiv" style="margin-bottom: 15px;display: none">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">原因</span>
+                        </div>
+                        <input type="text" placeholder="请输入不接单原因" value="" class="form-control reason">
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</script>
+<!-- 列表模板 -->
+<script id="visaListItem" type="text/html">
+    <thead>
+    <tr>
+
+        categoryId: "2"
+        categoryTitle: "分类111"
+        channelId: "8"
+        channelTitle: "channel2"
+        createTime: "2020-12-18 17:18:21"
+        id: "13"
+        memo: null
+        mobile: "13666666666"
+        money: "100.00"
+        num: "100"
+        orderNo: "AC18831017158278"
+        parentCategoryId: "1"
+        parentCategoryTitle: "分类1"
+        planId: "1"
+        planTitle: "真人阅读"
+        refundMoney: null
+        status: "3"
+        url: "http://wfdfd.com"
+        userId: "2"
+
+        分类ID 分类标题 渠道ID 渠道标题 创建时间 ID 备注 手机号 金额 数量 订单号 父级分类ID 父级分类标题 优化方案ID 优化方案标题 退款金额 状态 链接 用户ID
+
+        <th>ID</th>
+        <th>订单号</th>
+        <th>会员运营ID</th>
+        <th style="width:12%;word-wrap: break-word;word-break:break-all;">商品标题</th>
+        <!--<th>店铺名称</th>-->
+        <th>付款金额</th>
+        <th>付款预估收入</th>
+        <!--<th class="em-min-8">-->
+            <!--<div>订单支付时间</div>-->
+            <!--<input type="text" autocomplete="off" class="em-12 py-0 px-1" placeholder="请选择筛选日期..." id="time">-->
+        <!--</th>-->
+        <th>订单支付时间</th>
+        <th>淘状态</th>
+        <th class="em-min-7">
+            <div class="dropdown">
+                <span class="dropdown-toggle" id="dropStatus" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <%= statusText %>
+                </span>
+                <div class="dropdown-menu" aria-labelledby="dropdownVisaStatus" id="dropStatusOptions">
+                    <a class="dropdown-item" href="javascript:" data-id="">所有</a>
+                    <a class="dropdown-item" href="javascript:" data-id="1">已付款</a>
+                    <a class="dropdown-item" href="javascript:" data-id="2">已收货</a>
+                    <a class="dropdown-item" href="javascript:" data-id="3">已结算</a>
+                    <a class="dropdown-item" href="javascript:" data-id="4">已失效</a>
+                    <a class="dropdown-item" href="javascript:" data-id="5">已维权退单</a>
+                </div>
+            </div>
+        </th>
+        <!--<th class="em-min-7">-->
+            <!--<div class="dropdown">-->
+                <!--<span class="dropdown-toggle" id="dropSettlement" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">-->
+                    <!--<%= settlementText %>-->
+                <!--</span>-->
+                <!--<div class="dropdown-menu" aria-labelledby="dropSettlement" id="dropSettlementOptions">-->
+                    <!--<a class="dropdown-item" href="javascript:" data-id="">所有</a>-->
+                    <!--<a class="dropdown-item" href="javascript:" data-id="1">已结算</a>-->
+                    <!--<a class="dropdown-item" href="javascript:" data-id="2">未结算</a>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</th>-->
+        <th style="width:12%;word-wrap: break-word;word-break:break-all;">操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% if (dataArr.length > 0) { %>
+    <% for (var i = 0; i < dataArr.length; i++) { %>
+    <tr data-id="<%= dataArr[i].id %>">
+        <td><%= dataArr[i].id %></td>
+        <td>
+            <%= dataArr[i].orderNo %>
+            <% if(dataArr[i].subOrderNo){ %>
+            <div style="color:red;margin-top: 5px"><%= dataArr[i].subOrderNo %></div>
+            <% } %>
+        </td>
+        <td><%= dataArr[i].memberOperationId %></td>
+        <td><%= dataArr[i].itemTitle %></td>
+        <!--<td><%= dataArr[i].shopName %></td>-->
+        <td><%= dataArr[i].amount %>元</td>
+        <td><%= dataArr[i].predictPayAmount %></td>
+        <td><%= dataArr[i].orderCreateTime %></td>
+        <td><%= dataArr[i].taobaoOrderStatus %></td>
+        <td>
+            <%- dataArr[i].statusText %>
+            <% if(dataArr[i].isSettlement==1){ %>
+            <div style="margin-top: 5px"><%= dataArr[i].settlementTime_sys %></div>
+            <% } %>
+        </td>
+        <!--<td><%- dataArr[i].isSettlementText %></td>-->
+        <td style="width:12%;word-wrap: break-word;word-break:break-all;">
+            <div class="d-flex flex-wrap justify-content-center">
+                <%- dataArr[i].materialButtonGroup %>
+            </div>
+        </td>
+    </tr>
+    <% } %>
+    <% } else { %>
+    <tr>
+        <td colspan="15">没有符合条件的记录</td>
+    </tr>
+    <% } %>
+    </tbody>
+</script>
+<script data-main="/public/js/module/mall/order"></script>
+<script type="text/javascript" src="/public/js/plugins/moment.min.js"></script>
+<script type="text/javascript" src="/public/js/plugins/moment.js"></script>
+@@include('../../inc-footer.html')
+<script type="text/javascript" src="/public/js/plugins/daterangepicker.js"></script>

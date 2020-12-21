@@ -1,0 +1,136 @@
+@@include('../../inc-header.html', {"title": "快递费管理"})
+@@include('../../top-nav.html')
+@@include('../../left-nav.html')
+<main class="app-content">
+    <div class="app-title">
+        <div>
+            <h1><i class="fa fa-th-list"></i> 快递费管理</h1>
+        </div>
+        <ul class="app-breadcrumb breadcrumb side">
+            <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
+            <li class="breadcrumb-item">Tables</li>
+            <li class="breadcrumb-item active"><a href="#">快递费管理</a></li>
+        </ul>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="tile">
+                <div class="row" style="margin-bottom:20px ">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
+                        <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                            <input type="text" class="form-control" id="searchCont" autocomplete="off" style="width:60%">
+                            <button class="btn btn-secondary" type="button" id="selectsearchlabel">标题</button>
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-primary dropdown-toggle" id="btnGroupDrop1" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item searchlabel" href="#">标题</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="btn-group" style="margin-left:1%">
+                            <div id="search" class="btn btn-primary" style="outline:none">提交搜索</div>
+                        </div>
+                        <div class="btn-group" style="float:right">
+                            <button id="addModal" class="btn btn-primary" data-toggle="modal" data-target="#myModal" style="outline:none;margin-left: 3px">新增</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="tile-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bordered" id="sampleTable"></table>
+                        <div id="visaPagination" class="d-flex justify-content-end">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<!-- 列表模板 -->
+<script id="visaListItem" type="text/html">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>标题</th>
+        <th>省份 + 运费</th>
+        <th class="em-min-7">
+            <div class="dropdown">
+                <span class="dropdown-toggle" id="dropStatus" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <%= statusText %>
+                </span>
+                <div class="dropdown-menu" aria-labelledby="dropdownVisaStatus" id="dropStatusOptions">
+                    <a class="dropdown-item" href="javascript:" data-id="">所有</a>
+                    <a class="dropdown-item" href="javascript:" data-id="1">有效</a>
+                    <a class="dropdown-item" href="javascript:" data-id="2">无效</a>
+                </div>
+            </div>
+        </th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% if (dataArr.length > 0) { %>
+    <% for (var i = 0; i < dataArr.length; i++) { %>
+    <tr data-id="<%= dataArr[i].id %>">
+        <td><%= dataArr[i].id %></td>
+        <td><%= dataArr[i].title %></td>
+        <td>
+            <% for (var j = 0; j < dataArr[i].itemArr.length; j++) { %>
+            <div style="margin-bottom: 3px"><%= dataArr[i].itemArr[j].province %>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: red"><%= dataArr[i].itemArr[j].fee %>元</span></div>
+            <% } %>
+        </td>
+        <td><%- dataArr[i].statusText %></td>
+        <td>
+            <div class="d-flex flex-wrap justify-content-center">
+                <%- dataArr[i].materialButtonGroup %>
+            </div>
+        </td>
+    </tr>
+    <% } %>
+    <% } else { %>
+    <tr>
+        <td colspan="5">没有符合条件的记录</td>
+    </tr>
+    <% } %>
+    </tbody>
+</script>
+<!--Modal新增,编辑，查看-->
+<script id="modalDiv" type="text/html">
+    <form id="visaPassportForm" disabled="true">
+        <fieldset>
+            <input type="hidden" name="id" value="<%= dataArr.id %>">
+            <div class="form-row" style="margin-bottom: 20px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">标题</span>
+                        </div>
+                        <input type="text" name="title" placeholder="请输入标题" value="<%= dataArr.title %>" class="form-control" required>
+                    </div>
+                </div>
+            </div>
+            <div id="itemSelectDiv">
+                <div id="delItemArr"></div>
+                <div class="form-row singItem" style="margin-bottom: 15px">
+                    <% for (var j = 0; j < dataArr.regionDataArr.length; j++) { %>
+                    <div class="col-6" style="margin-bottom: 20px;padding-right: 20px">
+                        <div class="input-group">
+                            <div class="custom-control custom-checkbox custom-control-inline" style="width: 100%;padding-left: 0">
+                                <span style="min-width: 80px;max-width: 200px"><%= dataArr.regionDataArr[j] %></span>
+                                <input data-operate="checkProvince" type="checkbox" id="order_<%= j %>" name="itemArr[<%= j %>][province]" class="custom-control-input checkboxItem" value="<%= dataArr.regionDataArr[j] %>" <% for (var i = 0; i < itemArr.length; i++) { %><% if (dataArr.regionDataArr[j]==itemArr[i].province) { %> checked <% }%><% } %>>
+                                <label style="width: 100%;margin-left: 20px" class="custom-control-label" for="order_<%= j %>">
+                                    <input type="hidden" name="itemArr[<%= j %>][id]"  placeholder="" <% for (var i = 0; i < itemArr.length; i++) { %><% if (dataArr.regionDataArr[j]==itemArr[i].province) { %> value="<%= itemArr[i].id %>" <% }%><% } %> class="form-control">
+                                    <input type="text" name="itemArr[<%= j %>][fee]"  placeholder="" <% for (var i = 0; i < itemArr.length; i++) { %><% if (dataArr.regionDataArr[j]==itemArr[i].province) { %> value="<%= itemArr[i].fee %>" <% }%><% } %> class="form-control">
+                                </label>
+                                <span style="margin-top: 5px;margin-left: 15px">元</span>
+                            </div>
+                        </div>
+                    </div>
+                    <% } %>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</script>
+<script data-main="/public/js/module/mall/express"></script>
+@@include('../../inc-footer.html')

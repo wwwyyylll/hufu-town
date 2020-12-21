@@ -1,0 +1,28 @@
+@@include('inc-header.html', {"title": "胡夫塔后台登录"})
+    <section class="material-half-bg">
+      <div class="cover"></div>
+    </section>
+    <section class="login-content">
+      <div class="logo">
+        <h3>胡夫塔</h3>
+      </div>
+      <div class="login-box" onsubmit="return false">
+        <form class="login-form" >
+          <h3 class="login-head"><i class="fa fa-lg fa-fw fa-user"></i>SIGN IN</h3>
+          <div class="form-group">
+            <label class="control-label">USERNAME</label>
+            <input name="userName" class="form-control" type="text" placeholder="name" required autofocus>
+          </div>
+          <div class="form-group">
+            <label class="control-label">PASSWORD</label>
+            <input name="password" class="form-control" type="password" required placeholder="Password">
+          </div>
+          <div class="form-group btn-container">
+            <button id="login" class="btn btn-primary btn-block"><i class="fa fa-sign-in fa-lg fa-fw"></i>SIGN IN</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+<script data-main="/public/js/module/login"></script>
+@@include('inc-footer.html')

@@ -1,0 +1,235 @@
+@@include('../../inc-header.html', {"title": "推广海报管理"})
+@@include('../../top-nav.html')
+@@include('../../left-nav.html')
+<main class="app-content">
+    <div class="app-title">
+        <div>
+            <h1><i class="fa fa-th-list"></i> 推广海报管理</h1>
+        </div>
+        <ul class="app-breadcrumb breadcrumb side">
+            <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
+            <li class="breadcrumb-item">Tables</li>
+            <li class="breadcrumb-item active"><a href="#">推广海报管理</a></li>
+        </ul>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="tile">
+                <div class="row" style="margin-bottom:20px ">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
+                        <div class="btn-group" role="group" aria-label="Button group with nested dropdown" style="display: none">
+                            <input type="text" class="form-control" id="searchCont" autocomplete="off" style="width:60%">
+                            <button class="btn btn-secondary" type="button" id="selectsearchlabel">姓名</button>
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-primary dropdown-toggle" id="btnGroupDrop1" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item searchlabel" href="#">姓名</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="btn-group" style="margin-left:1%;display: none">
+                            <div id="search" class="btn btn-primary" style="outline:none">提交搜索</div>
+                        </div>
+                        <div class="btn-group" style="float:right">
+                            <button id="addModal" class="btn btn-primary" data-toggle="modal" data-target="#myModal" style="outline:none;margin-left: 3px">新增</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="tile-body">
+                    <div class="table-responsive" style="min-height: 300px">
+                        <table class="table table-hover table-bordered" id="sampleTable"></table>
+                        <div id="visaPagination" class="d-flex justify-content-end">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<!-- 列表模板 -->
+<script id="visaListItem" type="text/html">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>海报原图</th>
+        <th>二维码图片</th>
+        <th>二维码X + Y坐标</th>
+        <th>邀请码X + Y坐标</th>
+        <th style="width:20%;word-wrap: break-word;word-break:break-all;">内容</th>
+        <th>排序</th>
+        <th>类型</th>
+        <th class="em-min-7">
+            <div class="dropdown">
+                <span class="dropdown-toggle" id="dropStatus" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <%= statusText %>
+                </span>
+                <div class="dropdown-menu" aria-labelledby="dropdownVisaStatus" id="dropStatusOptions">
+                    <a class="dropdown-item" href="javascript:" data-id="">所有</a>
+                    <a class="dropdown-item" href="javascript:" data-id="1">有效</a>
+                    <a class="dropdown-item" href="javascript:" data-id="2">无效</a>
+                </div>
+            </div>
+        </th>
+        <th>创建时间</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% if (dataArr.length > 0) { %>
+    <% for (var i = 0; i < dataArr.length; i++) { %>
+    <tr data-id="<%= dataArr[i].id %>">
+        <td><%= dataArr[i].id %></td>
+        <td>
+            <% if(dataArr[i].pic){ %>
+            <a target="_blank" href="<%= dataArr[i].pic %>">
+                <img src="<%= dataArr[i].pic %>" style="display: inline-block;width:100px;height: 50px">
+            </a>
+            <% }else{ %>
+            <span style="color: red">暂无海报原图</span>
+            <% } %>
+        </td>
+        <td>
+            <% if(dataArr[i].qrCodePic){ %>
+            <a target="_blank" href="<%= dataArr[i].qrCodePic %>">
+                <img src="<%= dataArr[i].qrCodePic %>" style="display: inline-block;width:100px;height: 50px">
+            </a>
+            <% }else{ %>
+            <span style="color: red">暂无二维码图片</span>
+            <% } %>
+        </td>
+        <td>
+            <% if(dataArr[i].qrCode_x){ %>
+            <div style="margin-bottom: 5px">X : <%= dataArr[i].qrCode_x %></div>
+            <% } %>
+            <% if(dataArr[i].qrCode_y){ %>
+            <div>Y : <%= dataArr[i].qrCode_y %></div>
+            <% } %>
+        </td>
+        <td>
+            <% if(dataArr[i].inviteCode_x){ %>
+            <div style="margin-bottom: 5px">X : <%= dataArr[i].inviteCode_x %></div>
+            <% } %>
+            <% if(dataArr[i].inviteCode_y){ %>
+            <div>Y : <%= dataArr[i].inviteCode_y %></div>
+            <% } %>
+        </td>
+        <td style="width:20%;word-wrap: break-word;word-break:break-all;"><%= dataArr[i].content %></td>
+        <td><%= dataArr[i].sort %></td>
+        <td><%- dataArr[i].typeText %></td>
+        <td><%- dataArr[i].statusText %></td>
+        <td><%= dataArr[i].createTime %></td>
+        <td>
+            <div class="d-flex flex-wrap justify-content-center">
+                <%- dataArr[i].materialButtonGroup %>
+            </div>
+        </td>
+    </tr>
+    <% } %>
+    <% } else { %>
+    <tr>
+        <td colspan="9">没有符合条件的记录</td>
+    </tr>
+    <% } %>
+    </tbody>
+</script>
+<!--Modal新增,编辑，查看主播-->
+<script id="modalDiv" type="text/html">
+    <form id="visaPassportForm" disabled="true">
+        <fieldset>
+            <input type="hidden" name="id" value="<%= dataArr.id %>">
+            <div class="form-row uploadFile" style="margin-bottom: 15px">
+                <div class="col-5">
+                    <div class="input-group">
+                        <span style="margin-top:6px;margin-right: 10px">上传海报原图</span>
+                        <label class="file-label btn btn-primary mb-0 mr-2"><input type="file" name="avatar1" class="uploadImg d-none">选择图片文件</label>
+                        <button type="button" class="btn btn-default avatarUpload" disabled>上传文件</button>
+                    </div>
+                </div>
+                <div class="col-7">
+                    <div class="input-group">
+                        <% if (dataArr.pic) { %>
+                        <h6 class="imgUrl">
+                            <a target='_blank' href='<%= dataArr.pic %>'>
+                                <img src="<%= dataArr.pic %>" style="display: inline-block;width:100px;height: 33px;">
+                            </a>
+                        </h6>
+                        <% } else { %>
+                        <h6 style="margin-top: 9px" class="imgUrl"><span style="color:red">暂无海报原图</span></h6>
+                        <% } %>
+                        <input type="hidden" name="pic" value="<%= dataArr.pic %>">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-6">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">二维码X坐标</span>
+                        </div>
+                        <input type="text" name="qrCode_x" placeholder="请输入二维码X坐标" value="<%= dataArr.qrCode_x %>" class="form-control" required>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">二维码Y坐标</span>
+                        </div>
+                        <input type="text" name="qrCode_y" placeholder="请输入二维码Y坐标" value="<%= dataArr.qrCode_y %>" class="form-control" required>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-6">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">邀请码X坐标</span>
+                        </div>
+                        <input type="text" name="inviteCode_x" placeholder="请输入邀请码X坐标" value="<%= dataArr.inviteCode_x %>" class="form-control">
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">邀请码Y坐标</span>
+                        </div>
+                        <input type="text" name="inviteCode_y" placeholder="请输入邀请码Y坐标" value="<%= dataArr.inviteCode_y %>" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-6">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">排序</span>
+                        </div>
+                        <input type="text" name="sort" placeholder="请输入排序" value="<%= dataArr.sort %>" class="form-control" required>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">类型</span>
+                        </div>
+                        <select name="type" class="form-control">
+                            <option value="">请选择</option>
+                            <option value="1" <% if(dataArr.type==1){ %> selected <% } %>>内测</option>
+                            <option value="2" <% if(dataArr.type==2){ %> selected <% } %>>供会员使用</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">内容</span>
+                        </div>
+                        <textarea style="resize:vertical;min-height: 70px" class="form-control" name="content" required><%= dataArr.content %></textarea>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</script>
+<script data-main="/public/js/module/mall/images"></script>
+@@include('../../inc-footer.html')

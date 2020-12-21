@@ -1,0 +1,9 @@
+npm init
+
+npm install --save-dev grunt grunt-contrib-clean grunt-contrib-concat grunt-contrib-connect grunt-contrib-copy grunt-contrib-cssmin grunt-contrib-jshint grunt-contrib-requirejs grunt-contrib-uglify grunt-contrib-watch grunt-include-replace grunt-usemin load-grunt-tasks
+npm install --save-dev grunt-postcss postcss-advanced-variables postcss-calc postcss-cssnext postcss-nested postcss-px2rem
+
+(npm ERR! Unexpected end of JSON input while parsing near '...}},"1.12.3":{"name":"')
+npm cache clean --force
+
+npm audit fix
