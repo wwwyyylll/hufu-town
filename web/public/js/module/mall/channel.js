@@ -17,19 +17,19 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
         $("#searchCont").attr("data-id",'');
     });
 
+    //上传图片文件
     function blobToDataURL(blob,cb) {
         var reader = new FileReader();
         reader.onload = function (evt) {
-            var base64 = evt.target.result
+            var base64 = evt.target.result;
             cb(base64)
         };
         reader.readAsDataURL(blob);
     }
-
-    var picFile = "";
     function uploadFile(){
         //选择图片文件
         $(".uploadImg").change(function(){
+            var uploadFile = $(this).closest(".uploadFile");
             //判断是否支持FileReader
             if (window.FileReader) {
                 var reader = new FileReader();
@@ -39,11 +39,11 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
             var file = this.files[0];
             reader.onload = function(e) {
                 //获取图片dom
-                $(".imgUrl").html('<i class="fa fa-image mr-2"></i>' + file.name)
+                uploadFile.find(".imgUrl").html('<i class="fa fa-image mr-2"></i>' + file.name)
                 if(file.name!=""){
-                    $(".avatarUpload").removeAttr("disabled");
-                    $(".avatarUpload").removeClass("btn-default");
-                    $(".avatarUpload").addClass("btn-primary");
+                    uploadFile.find(".avatarUpload").removeAttr("disabled");
+                    uploadFile.find(".avatarUpload").removeClass("btn-default");
+                    uploadFile.find(".avatarUpload").addClass("btn-primary");
                 }
             };
             reader.readAsDataURL(file);
@@ -51,12 +51,13 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
             if(file){
                 var url = URL.createObjectURL(file);
                 var base64 = blobToDataURL(file,function(base64Url) {
-                    picFile = base64Url;
+                    uploadFile.find(".temporaryFile").text(base64Url);
                 })
             }
         })
         // 上传图片文件
-        $(".uploadFile").find('.avatarUpload').click(function () {
+        $('.avatarUpload').click(function () {
+            var uploadFile = $(this).closest(".uploadFile");
             $.ajax({
                 type:'POST',
                 url: "@@API",
@@ -67,68 +68,37 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
                     linkPassword:consts.param.linkPassword,
                     signature:consts.param.signature,
                     userToken: $.cookie('userToken'),
-                    content:picFile
+                    content:uploadFile.find(".temporaryFile").text()
                 },
                 dataType: 'json',
                 success: function (res) {
-                    $(".imgUrl").html("");
-                    $(".imgUrl").html("<a target='_blank' href='"+ res.result +"'><img style='display: inline-block;width: 45px;height: 20px' src='"+ res.result +"'></a>");
-                    $("input[name=picUrl]").val(res.result);
+                    uploadFile.find(".imgUrl").html("");
+                    uploadFile.find(".imgUrl").html("<a target='_blank' href='"+ res.result +"'><img style='display: inline-block;width: 45px;height: 20px' src='"+ res.result +"'></a>");
+                    uploadFile.find("input[type=hidden]").val(res.result);
                 }
             }).fail(function (jqXHR, textStatus) {
                 hound.error('Request failed: ' + textStatus);
             });
         });
     }
-    function getUserLists(){
-        $(".nickName").on("input",function() {
-            var param = {
-                pageNo: 1,
-                pageSize: 5000000,
-                status: '',
-                mobile: '',
-                nickName: $(".nickName").val(),
-                source: 1
-            };
-            utils.ajaxSubmit(apis.user.getLists, param, function (data) {
-                if (data.dataArr.length != 0) {
-                    var $economyAbilityItem = '';
-                    $.each(data.dataArr, function (i, v) {
-                        $economyAbilityItem += '<div data-id="' + v.id + '" class="economy-ability-item">' + v.nickName + '</div>'
-                    })
-                    $('.ability-list').remove();
-                    var $abilityList = '<div class="ability-list">' + $economyAbilityItem + '</div>';
-                    $(".nickName").closest('.economy-wards').append($abilityList);
 
-                    $('.economy-ability-item').click(function () {
-                        $('.ability-list').remove();
-                        var $index = $(this).index();
-                        $(".nickName").val(data.dataArr[$index].nickName);
-                        $("input[name=userId]").val(data.dataArr[$index].id);
-                    });
-                } else {
-                    $('.ability-list').remove();
-                    var $abilityList = '<div class="ability-list">' +
-                        '<div data-id="-1" class="economy-ability-item">无数据</div>'
-                        + '</div>';
-                    $(".nickName").closest('.economy-wards').append($abilityList);
-
-                    $('.economy-ability-item').click(function () {
-                        $('.ability-list').remove();
-                        var $index = $(this).index();
-                        $(".nickName").val("无数据");
-                        $("input[name=userId]").val("-1");
-                    });
-                }
-            });
+    var parentArr = '';
+    function getCategoryParentLists(){
+        utils.ajaxSubmit(apis.category.getParentCategoryLists, '', function (data) {
+            parentArr = data;
         })
     }
+    getCategoryParentLists();
+
     //新增
     $addModal.on("click",function(){
         var initialData = {
-            dataArr:{}
+            dataArr:{},
+            categoryArr:{},
+            parentArr:parentArr
         };
-        utils.renderModal('新增渠道商', template('modalDiv',initialData), function(){
+        utils.renderModal('新增渠道', template('modalDiv',initialData), function(){
+            utils.reInputName($(".singItem"));
             if($("#visaPassportForm").valid()){
                 utils.ajaxSubmit(apis.channel.create,$("#visaPassportForm").serialize(),function(data){
                     hound.success("添加成功","",1000);
@@ -137,39 +107,64 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
                     loadData();
                 })
             }
-        }, 'md');
-        getUserLists();
+        }, 'lg');
+        uploadFile();
     });
 
     //页面操作配置
     var operates = {
+        //新增分类
+        addSelect:function($this){
+           var getData = {
+               parentArr:parentArr
+           };
+           $("#itemSelectDiv").append(template('singItemDiv', getData));
+        },
+        //删除分类
+        delSelect:function($this){
+            var row = $this.closest(".form-row");
+            //编辑页面要统计已有ID的问题选项 delItemArr[0][id]
+            //var delId = row.find("input").eq(1).val();
+            //if(delId!=""){
+            //    var delItemArr = $("#delItemArr");
+            //    delItemArr.append('<div class="delItemSingle"><input type="hidden" name="delItemArr[][id]" value="'+ delId +'" class="form-control"></div');
+            //}
+            row.remove();
+        },
         //编辑
         edit:function($this){
             var id = $this.closest("tr").attr("data-id");
-            var tr = $this.closest("tr");
-            var mobile = tr.find("td").eq(3).find("div").eq(0).text();
-            var pwd = tr.find("td").eq(3).find("div").eq(1).text();
-            var data = {
-                dataArr:{
-                    id:id,
-                    mobile:mobile,
-                    pwd:pwd
-                }
-            };
-            utils.renderModal('编辑渠道商', template('modalDiv', data), function(){
-                if($("#visaPassportForm").valid()) {
-                    utils.ajaxSubmit(apis.channel.updateById, $("#visaPassportForm").serialize(), function (data) {
-                        hound.success("编辑成功", "", 1000);
-                        utils.modal.modal('hide');
-                        loadData();
-                    })
-                }
-            }, 'md');
+            utils.ajaxSubmit(apis.channel.getById, {id: id}, function (data) {
+                var data = {
+                    categoryArr:data.categoryArr,
+                    dataArr:data,
+                    parentArr:parentArr
+                };
+                utils.renderModal('编辑渠道', template('modalDiv', data), function(){
+                    utils.reInputName($(".singItem"));
+                    if($("#visaPassportForm").valid()) {
+                        utils.ajaxSubmit(apis.channel.updateById, $("#visaPassportForm").serialize(), function (data) {
+                            hound.success("编辑成功", "", 1000);
+                            utils.modal.modal('hide');
+                            loadData();
+                        })
+                    }
+                }, 'lg');
+                uploadFile();
+            });
         },
         //查看
         look:function($this){
             var id = $this.closest("tr").attr("data-id");
-            window.open("@@HOSTview/mall/channelBusinessLook.html?id=" + id);
+            utils.ajaxSubmit(apis.channel.getById, {id: id}, function (data) {
+                var getByIdData = {
+                    categoryArr:data.categoryArr,
+                    dataArr:data,
+                    parentArr:parentArr
+                };
+                utils.renderModal('查看渠道', template('modalDiv', getByIdData),'', 'lg');
+                $("#visaPassportForm").append($("fieldset").prop('disabled', true));
+            });
         },
         //无效
         setOff:function($this){
@@ -191,11 +186,23 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
         }
     };
 
+    var loc = location.href;
+    var n1 = loc.length;//地址的总长度
+    var n2 = loc.indexOf("=");//取得=号的位置
+    var id = decodeURI(loc.substr(n2+1,n1-n2));//从=号后面的内容
+    var urlParam = id.split("=");
+    var channelTitle = '';
+    if(urlParam[0].indexOf("html")!='-1'){
+        channelTitle = '';
+    }else{
+        channelTitle = urlParam[0];
+    }
+
     var param = {
         pageNo: 1,
         pageSize:10,
         status:'',
-        title:''
+        title:channelTitle
     };
 
     function loadData() {

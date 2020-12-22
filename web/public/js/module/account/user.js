@@ -50,12 +50,22 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
         //充值金额
         recharge:function($this){
             var id = $this.closest("tr").attr("data-id");
-            hound.reason('确认充值金额吗?','请输入充值金额',function(data){
-                utils.ajaxSubmit(apis.user.rechargeById, {id: id,money:data}, function (data) {
-                    hound.success("操作成功", "", 1000);
-                    loadData();
-                });
-            })
+            var getByIdData = {
+                dataArr:{
+                    id:id
+                }
+            };
+            utils.renderModal('充值金额', template('rechargeDiv', getByIdData), function(){
+                if($("#rechargeForm").valid()) {
+                    utils.loading(true);
+                    utils.ajaxSubmit(apis.user.rechargeById, $("#rechargeForm").serialize(), function (data) {
+                        utils.loading(false);
+                        hound.success("充值成功", "", 1000);
+                        utils.modal.modal('hide');
+                        loadData();
+                    })
+                }
+            }, 'md');
         },
         getMoneyList:function($this){
             var id = $this.closest("tr").attr("data-id");
@@ -71,6 +81,10 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
     };
     function getMoneyListData(){
         utils.ajaxSubmit(apis.user.getUserMoneyLists, getMoneyListParam, function (data) {
+            $.each(data.dataArr,function(i,n){
+                n.userTypeText = consts.status.userType[n.userType];
+            });
+            data.userId = getMoneyListParam.id;
             utils.renderModal('金额变化日志列表',template('moneyList', data),'', 'lg');
             utils.bindPagination($("#moneyPagination"), getMoneyListParam, getMoneyListData);
             $("#moneyPagination").html(utils.pagination(parseInt(data.cnt), getMoneyListParam.pageNo));

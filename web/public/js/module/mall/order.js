@@ -6,15 +6,11 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
     var $searchCont = $("#searchCont");
     var $batchImport = $("#batchImport");
     //按钮组集合
-    var lookButton = '<button class="btn btn-info" type="button" data-operate="look">查看</button>',
+    var lookButton = '<button class="btn btn-info" type="button" data-operate="look">查看详情</button>',
+        doingButton = '<button class="btn btn-primary" type="button" data-operate="doing">处理</button>',
         completeBouutn =  '<button class="btn btn-primary" type="button" data-operate="complete">完成</button>',
-        refundButton = '<button class="btn btn-danger" type="button" data-operate="activistRefund">退款</button>',
-        validButton = '<button class="btn btn-danger" type="button" data-operate="valid">无效</button>',
-        deliverButton = '<button class="btn btn-primary" type="button" data-operate="deliver">发货</button>',
-        submitSupplierButton = '<button class="btn btn-primary" type="button" data-operate="submitSupplier">接单</button>',
-        noSupplierButton = '<button class="btn btn-danger" type="button" data-operate="noSupplier">不接单</button>',
-        supplierButton = '<button class="btn btn-primary" type="button" data-operate="supplier">供应商接单</button>',
-        bindMemberIdButton = '<button class="btn btn-primary" type="button" data-operate="bindMemberId">绑定会员运营ID</button>';
+        refundButton = '<button class="btn btn-danger" type="button" data-operate="refund">退款</button>',
+        getLogListButton = '<button class="btn btn-info" type="button" data-operate="getLogList">状态变更日志</button>';
 
     searchlabel.on("click",function(){
         $("#selectsearchlabel").text($(this).text());
@@ -132,8 +128,17 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
         //查看
         look:function($this){
             var id = $this.closest("tr").attr("data-id");
-            var orderNo = $this.closest("tr").find("td").eq(1).find("div").eq(0).text();
-            window.open("@@HOSTview/mall/orderDetails.html?id=" + id);
+            var orderNo = $this.closest("tr").find("td").eq(2).text();
+            window.open("@@HOSTview/mall/orderDetails.html?orderNo=" + orderNo);
+        },
+        //处理
+        doing:function($this){
+            var id = $this.closest("tr").attr("data-id");
+            hound.confirm('确认处理订单吗?', '', function () {
+                utils.ajaxSubmit(apis.order.doingById, {id: id}, function (data) {
+                    loadData();
+                });
+            });
         },
         //完成
         complete:function($this){
@@ -144,157 +149,47 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
                 });
             });
         },
-        //维权退款
-        activistRefund:function($this){
-            var id = $this.closest("tr").attr("data-id");
-            hound.confirm('确认维权退款吗?', '', function () {
-                utils.ajaxSubmit(apis.order.refundById, {id: id}, function (data) {
-                    loadData();
-                });
-            });
-        },
-        //无效
-        valid:function($this){
-            var id = $this.closest("tr").attr("data-id");
-            hound.confirm('确认订单无效吗?', '', function () {
-                utils.ajaxSubmit(apis.order.inValidById, {id: id}, function (data) {
-                    loadData();
-                });
-            });
-        },
-        //退款申请
+        //退款
         refund:function($this){
             var id = $this.closest("tr").attr("data-id");
-            var orderNo = $this.closest("tr").find("td").eq(1).find("div").eq(0).text();
-            var amountText = $this.closest("tr").find("td").eq(7).text();
-            var amount = amountText.substring(0,amountText.length-1);
-            var num = $this.closest("tr").find("td").eq(10).text();
+            var orderNo = $this.closest("tr").find("td").eq(2).text();
+            var moneyText = $this.closest("tr").find("td").eq(3).text();
+            var money = moneyText.substring(0,moneyText.length-1);
             var initialData = {
                 dataArr:{
                     id:id,
                     orderNo:orderNo,
-                    amount:amount,
-                    reason:'',
-                    num:num
+                    money:money,
+                    reason:''
                 }
             };
-            utils.renderModal('申请退款', template('refundModal', initialData), function(){
+            utils.renderModal('退款', template('refundModal', initialData), function(){
                 if($("#refundForm").valid()) {
-                    utils.ajaxSubmit(apis.mallOrderRefundRequest.create, $("#refundForm").serialize(), function (data) {
-                        hound.success("申请退款成功", "", 1000);
+                    utils.ajaxSubmit(apis.order.refundById, $("#refundForm").serialize(), function (data) {
+                        hound.success("退款成功", "", 1000);
                         utils.modal.modal('hide');
                         loadData();
                     })
                 }
             }, 'md');
         },
-        //发货
-        deliver:function($this){
+        //状态变更日志列表
+        getLogList:function($this){
             var id = $this.closest("tr").attr("data-id");
-            var orderNo = $this.closest("tr").find("td").eq(1).find("div").eq(0).text();
-            var initialData = {
-                dataArr:{
-                    id:id,
-                    orderNo:orderNo,
-                    expressCompany:'',
-                    expressNo:''
-                }
-            };
-            utils.renderModal('发货', template('deliverModal', initialData), function(){
-                if($("#deliverForm").valid()) {
-                    utils.ajaxSubmit(apis.order.deliveredById, $("#deliverForm").serialize(), function (data) {
-                        hound.success("发货成功", "", 1000);
-                        utils.modal.modal('hide');
-                        loadData();
-                    })
-                }
-            }, 'md');
-        },
-        //接单
-        submitSupplier:function($this){
-            var id = $this.closest("tr").attr("data-id");
-            var initialData = {
-                dataArr:{
-                    id:id,
-                    amount:''
-                }
-            };
-            utils.renderModal('接单', template('submitSupplierModal', initialData), function(){
-                if($("#submitSupplierForm").valid()) {
-                    utils.ajaxSubmit(apis.order.submitSupplierById, $("#submitSupplierForm").serialize(), function (data) {
-                        hound.success("接单成功", "", 1000);
-                        utils.modal.modal('hide');
-                        loadData();
-                    })
-                }
-            }, 'md');
-        },
-        //不接单
-        noSupplier:function($this){
-            var id = $this.closest("tr").attr("data-id");
-            hound.reason('确认不接单吗?','请输入不接单原因',function(data){
-                utils.ajaxSubmit(apis.order.submitSupplierById, {id: id,isAccept:2,reason:data}, function (data) {
-                    hound.success("操作成功", "", 1000);
-                    loadData();
+            var orderNo = $this.closest("tr").find("td").eq(2).text();
+            utils.ajaxSubmit(apis.order.getOrderLogListsByOrderId, {id:id}, function (data) {
+                $.each(data,function(i,n){
+                    n.statusText = consts.status.orderStatus[n.status];
+                    n.operatorTypeText = consts.status.userType[n.operatorType];
                 });
-            })
-        },
-        bindMemberId:function($this){
-            var id = $this.closest("tr").attr("data-id");
-            hound.reason('确认绑定会员运营ID吗?','请输入要绑定的会员运营ID',function(data){
-                utils.ajaxSubmit(apis.order.bindMemberOperationId, {id: id,memberOperationId:data}, function (data) {
-                    hound.success("操作成功", "", 1000);
-                    loadData();
-                });
-            })
-        },
-        supplier:function($this){
-            var id = $this.closest("tr").attr("data-id");
-            var totalAmount = $this.closest("tr").find("td").eq(6).find("span").eq(0).text();
-            var actualTotalAmount = $this.closest("tr").find("td").eq(7).text();
-            var num = $this.closest("tr").find("td").eq(10).text();
-            var goodsAmount = $this.closest("tr").find("td").eq(6).find("span").eq(1).text();
-            var expressFee = $this.closest("tr").find("td").eq(6).find("span").eq(2).text();
-            var deductionPrice = $this.closest("tr").find("td").eq(8).text();
-            var initialData = {
-                dataArr:{
-                    id:id,
-                    totalAmount:totalAmount,
-                    actualTotalAmount:actualTotalAmount,
-                    num:num,
-                    goodsAmount:goodsAmount,
-                    expressFee:expressFee,
-                    deductionPrice:deductionPrice
-                }
-            };
-            utils.renderModal('供应商接单', template('supplierModal', initialData), function(){
-                if($("#supplierForm").valid()) {
-                    utils.ajaxSubmit(apis.order.submitSupplierById, $("#supplierForm").serialize(), function (data) {
-                        hound.success("操作成功", "", 1000);
-                        utils.modal.modal('hide');
-                        loadData();
-                    })
-                }
-            }, 'md');
-            $("select[name=isAccept]").on("change",function(){
-                if($(this).val()==1){
-                    $(".amountDiv").show();
-                    $(".reasonDiv").hide();
-                    $(".amount").attr("required","required");
-                    $(".amount").attr("name","amount");
-                    $(".reason").removeAttr("required");
-                    $(".reason").removeAttr("name");
-                }else{
-                    $(".amountDiv").hide();
-                    $(".reasonDiv").show();
-                    $(".reason").attr("required","required");
-                    $(".reason").attr("name","reason");
-                    $(".amount").removeAttr("required");
-                    $(".amount").removeAttr("name");
-                }
+                var getData = {
+                    dataArr:data,
+                    orderNo:orderNo
+                };
+                utils.renderModal('状态变更日志列表',template('logList', getData),'', 'lg');
             })
         }
-    }
+    };
     var loc = location.href;
     var n1 = loc.length;//地址的总长度
     var n2 = loc.indexOf("=");//取得=号的位置
@@ -349,16 +244,18 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
         utils.ajaxSubmit(apis.order.getLists, param, function (data) {
             $.each(data.dataArr,function(i,n){
                 n.statusText = consts.status.orderStatus[n.status];
-                //n.isSettlementText = consts.status.orderSettlementStatus[n.isSettlement];
-                if(n.status==1 || n.status==2 || n.status==3){
-                    n.materialButtonGroup = lookButton + refundButton + validButton;
-                }else{
-                    n.materialButtonGroup = lookButton ;
-                }
-                if(n.memberOperationId=='' || n.memberOperationId==null){
-                    n.materialButtonGroup = n.materialButtonGroup + bindMemberIdButton ;
-                }else{
-                    n.materialButtonGroup = n.materialButtonGroup ;
+                if(n.status==1){
+                    //待处理
+                    n.materialButtonGroup = lookButton + doingButton + getLogListButton;
+                }else if(n.status==2){
+                    //处理中
+                    n.materialButtonGroup = lookButton + completeBouutn + refundButton + getLogListButton;
+                }else if(n.status==3){
+                    //已完成
+                    n.materialButtonGroup = lookButton + getLogListButton;
+                }else if(n.status==4){
+                    //已退款
+                    n.materialButtonGroup = lookButton + getLogListButton;
                 }
             });
             data.statusText = listDropDown.statusText;
@@ -490,12 +387,20 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
         if(selectSearchLabel=="订单号"){
             //订单号搜索
             param.orderNo = $("#searchCont").val();
-            param.memberOperationId = '';
+            param.mobile = '';
+            param.userId = '';
             loadData();
-        }else if(selectSearchLabel=="会员运营ID"){
+        }else if(selectSearchLabel=="手机号"){
             //商品标题搜索
-            param.memberOperationId = $("#searchCont").val();
+            param.mobile = $("#searchCont").val();
             param.orderNo = '';
+            param.userId = '';
+            loadData();
+        }else if(selectSearchLabel=="用户ID"){
+            //商品标题搜索
+            param.userId = $("#searchCont").val();
+            param.orderNo = '';
+            param.mobile = '';
             loadData();
         }
     });

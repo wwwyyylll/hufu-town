@@ -10,6 +10,32 @@ define("apis", function() {
                 a:'isLogin'
             }
         },
+        admin:{
+            getLists:{
+                c:'admin',
+                a:'getLists'
+            },
+            getById:{
+                c:'admin',
+                a:'getById'
+            },
+            create:{
+                c:'admin',
+                a:'create'
+            },
+            updateById:{
+                c:'admin',
+                a:'updateById'
+            },
+            onById:{
+                c:'admin',
+                a:'onById'
+            },
+            offById:{
+                c:'admin',
+                a:'offById'
+            }
+        },
         user:{
             getLists:{
                 c:'user',

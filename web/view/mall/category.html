@@ -159,26 +159,26 @@
                     <% } %>
                 </div>
             </div>
-            <div class="form-row uploadFile">
-                <div class="input-group">
-                    <span style="margin-top:6px;margin-right: 10px">上传图片</span>
-                    <label class="file-label btn btn-primary mb-0 mr-2"><input type="file" name="avatar" class="uploadImg d-none">选择图片文件</label>
-                    <button type="button" class="btn btn-default avatarUpload" disabled>上传文件</button>
-                    <span class="temporaryFile" style="display: none"></span>
-                    <% if (dataArr.imgUrl) { %>
-                    <h6 style="margin-left: 10px;margin-bottom: 0" class="imgUrl">
-                        <a target='_blank' href='<%= dataArr.imgUrl %>'>
-                            <img style="display: inline-block;width: 65px;height: 35px" src="<%= dataArr.imgUrl %>">
-                        </a>
-                    </h6>
-                    </h6>
-                    <% } else { %>
-                    <h6 style="margin-top: 9px;margin-left: 10px" class="imgUrl"><span style="color:red">暂无图片</span></h6>
-                    <% } %>
-                    <!--<h6 style="color: red;margin-top: 9px;margin-left: 10px">（提示：上传的商品封面图的尺寸为315×214或者787×399）</h6>-->
-                    <input type="hidden" name="imgUrl" value="<%= dataArr.imgUrl %>">
-                </div>
-            </div>
+            <!--<div class="form-row uploadFile">-->
+                <!--<div class="input-group">-->
+                    <!--<span style="margin-top:6px;margin-right: 10px">上传图片</span>-->
+                    <!--<label class="file-label btn btn-primary mb-0 mr-2"><input type="file" name="avatar" class="uploadImg d-none">选择图片文件</label>-->
+                    <!--<button type="button" class="btn btn-default avatarUpload" disabled>上传文件</button>-->
+                    <!--<span class="temporaryFile" style="display: none"></span>-->
+                    <!--<% if (dataArr.imgUrl) { %>-->
+                    <!--<h6 style="margin-left: 10px;margin-bottom: 0" class="imgUrl">-->
+                        <!--<a target='_blank' href='<%= dataArr.imgUrl %>'>-->
+                            <!--<img style="display: inline-block;width: 65px;height: 35px" src="<%= dataArr.imgUrl %>">-->
+                        <!--</a>-->
+                    <!--</h6>-->
+                    <!--</h6>-->
+                    <!--<% } else { %>-->
+                    <!--<h6 style="margin-top: 9px;margin-left: 10px" class="imgUrl"><span style="color:red">暂无图片</span></h6>-->
+                    <!--<% } %>-->
+                    <!--&lt;!&ndash;<h6 style="color: red;margin-top: 9px;margin-left: 10px">（提示：上传的商品封面图的尺寸为315×214或者787×399）</h6>&ndash;&gt;-->
+                    <!--<input type="hidden" name="imgUrl" value="<%= dataArr.imgUrl %>">-->
+                <!--</div>-->
+            <!--</div>-->
         </fieldset>
     </form>
 </script>

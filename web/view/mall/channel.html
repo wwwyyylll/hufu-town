@@ -30,7 +30,7 @@
                         <div class="btn-group" style="margin-left:1%">
                             <div id="search" class="btn btn-primary" style="outline:none">提交搜索</div>
                         </div>
-                        <div class="btn-group" style="float:right;display: none">
+                        <div class="btn-group" style="float:right">
                             <button id="addModal" class="btn btn-primary" data-toggle="modal" data-target="#myModal" style="outline:none;margin-left: 3px">新增</button>
                         </div>
                     </div>
@@ -51,10 +51,12 @@
     <thead>
     <tr>
         <th>ID</th>
-        <th style="width:15%;word-wrap: break-word;word-break:break-all;">标题</th>
-        <th>排序</th>
+        <th style="width:10%;word-wrap: break-word;word-break:break-all;">标题</th>
+        <th style="width:15%;word-wrap: break-word;word-break:break-all;">副标题</th>
         <th>图片</th>
-        <th>用户数量</th>
+        <th>默认订单数</th>
+        <th>订单数</th>
+        <th>排序</th>
         <th class="em-min-7">
             <div class="dropdown">
                 <span class="dropdown-toggle" id="dropStatus" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -67,6 +69,7 @@
                 </div>
             </div>
         </th>
+        <th>更新时间</th>
         <th>操作</th>
     </tr>
     </thead>
@@ -75,8 +78,8 @@
     <% for (var i = 0; i < dataArr.length; i++) { %>
     <tr data-id="<%= dataArr[i].id %>">
         <td><%= dataArr[i].id %></td>
-        <td style="width:15%;word-wrap: break-word;word-break:break-all;"><%= dataArr[i].title %></td>
-        <td><%= dataArr[i].idx %></td>
+        <td style="width:10%;word-wrap: break-word;word-break:break-all;"><%= dataArr[i].title %></td>
+        <td style="width:15%;word-wrap: break-word;word-break:break-all;"><%= dataArr[i].subTitle %></td>
         <td>
             <% if(dataArr[i].imgUrl){ %>
             <a href="<%= dataArr[i].imgUrl %>" target="_blank">
@@ -84,8 +87,11 @@
             </a>
             <% } %>
         </td>
-        <td><%= dataArr[i].userCnt %></td>
+        <td><%= dataArr[i].defOrderCnt %></td>
+        <td><%= dataArr[i].orderCnt %></td>
+        <td><%= dataArr[i].idx %></td>
         <td><%- dataArr[i].statusText %></td>
+        <td><%= dataArr[i].updateTime %></td>
         <td>
             <div class="d-flex flex-wrap justify-content-center">
                 <%- dataArr[i].materialButtonGroup %>
@@ -95,23 +101,31 @@
     <% } %>
     <% } else { %>
     <tr>
-        <td colspan="9">没有符合条件的记录</td>
+        <td colspan="12">没有符合条件的记录</td>
     </tr>
     <% } %>
     </tbody>
 </script>
-<!--Modal新增,编辑，查看问题-->
+<!--Modal新增,编辑，查看-->
 <script id="modalDiv" type="text/html">
     <form id="visaPassportForm" disabled="true">
         <fieldset>
             <input type="hidden" name="id" value="<%= dataArr.id %>">
             <div class="form-row" style="margin-bottom: 15px">
-                <div class="col-12">
+                <div class="col-9">
                     <div class="input-group economy-wards">
                         <div class="input-group-prepend">
-                            <span class="input-group-text">手机号</span>
+                            <span class="input-group-text">标题</span>
                         </div>
-                        <input type="text" name="mobile" value="<%= dataArr.mobile %>" placeholder="请输入手机号" class="form-control" required>
+                        <input type="text" name="title" value="<%= dataArr.title %>" placeholder="请输入标题" class="form-control" required>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="input-group economy-wards">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">排序</span>
+                        </div>
+                        <input type="text" name="idx" value="<%= dataArr.idx %>" placeholder="请输入排序" class="form-control">
                     </div>
                 </div>
             </div>
@@ -119,14 +133,118 @@
                 <div class="col-12">
                     <div class="input-group economy-wards">
                         <div class="input-group-prepend">
-                            <span class="input-group-text">密码</span>
+                            <span class="input-group-text">副标题</span>
                         </div>
-                        <input type="text" name="pwd" placeholder="请输入密码" class="form-control">
+                        <input type="text" name="subTitle" value="<%= dataArr.subTitle %>" placeholder="请输入副标题" class="form-control">
                     </div>
                 </div>
             </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-6">
+                    <div class="input-group economy-wards">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">默认订单数</span>
+                        </div>
+                        <input type="text" name="defOrderCnt" value="<%= dataArr.defOrderCnt %>" placeholder="请输入默认订单数" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row uploadFile" style="margin-bottom: 15px">
+                <div class="input-group">
+                    <span style="margin-top:6px;margin-right: 10px">上传背景图片</span>
+                    <label class="file-label btn btn-primary mb-0 mr-2"><input type="file" name="avatar" class="uploadImg d-none">选择图片文件</label>
+                    <button type="button" class="btn btn-default avatarUpload" disabled>上传文件</button>
+                    <span class="temporaryFile" style="display: none"></span>
+                    <% if (dataArr.imgUrl) { %>
+                    <h6 style="margin-left: 10px;margin-bottom: 0" class="imgUrl">
+                        <a target='_blank' href='<%= dataArr.imgUrl %>'>
+                            <img style="display: inline-block;width: 65px;height: 35px" src="<%= dataArr.imgUrl %>">
+                        </a>
+                    </h6>
+                    </h6>
+                    <% } else { %>
+                    <h6 style="margin-top: 9px;margin-left: 10px" class="imgUrl"><span style="color:red">暂无背景图片</span></h6>
+                    <% } %>
+                    <!--<h6 style="color: red;margin-top: 9px;margin-left: 10px">（提示：上传的商品封面图的尺寸为315×214或者787×399）</h6>-->
+                    <input type="hidden" name="imgUrl" value="<%= dataArr.imgUrl %>">
+                </div>
+            </div>
+            <div class="form-row uploadFile" style="margin-bottom: 15px">
+                <div class="input-group">
+                    <span style="margin-top:6px;margin-right: 10px">上传分类图片</span>
+                    <label class="file-label btn btn-primary mb-0 mr-2"><input type="file" name="avatar" class="uploadImg d-none">选择图片文件</label>
+                    <button type="button" class="btn btn-default avatarUpload" disabled>上传文件</button>
+                    <span class="temporaryFile" style="display: none"></span>
+                    <% if (dataArr.categoryImgUrl) { %>
+                    <h6 style="margin-left: 10px;margin-bottom: 0" class="imgUrl">
+                        <a target='_blank' href='<%= dataArr.categoryImgUrl %>'>
+                            <img style="display: inline-block;width: 65px;height: 35px" src="<%= dataArr.categoryImgUrl %>">
+                        </a>
+                    </h6>
+                    </h6>
+                    <% } else { %>
+                    <h6 style="margin-top: 9px;margin-left: 10px" class="imgUrl"><span style="color:red">暂无分类图片</span></h6>
+                    <% } %>
+                    <!--<h6 style="color: red;margin-top: 9px;margin-left: 10px">（提示：上传的商品封面图的尺寸为315×214或者787×399）</h6>-->
+                    <input type="hidden" name="categoryImgUrl" value="<%= dataArr.categoryImgUrl %>">
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-3">
+                    <div class="input-group">
+                        <input type="button" class="btn btn-primary mark" data-operate="addSelect" style="outline:none" value="新增分类">
+                    </div>
+                </div>
+            </div>
+            <div id="itemSelectDiv">
+                <div id="delItemArr"></div>
+                <% for (var j = 0; j < categoryArr.length; j++) { %>
+                <div class="form-row singItem" style="margin-bottom: 15px">
+                    <div class="col-6">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">分类</span>
+                            </div>
+                            <select name="categoryIdArr[]" class="form-control">
+                                <option value="">请选择</option>
+                                <% for(var i=0;i< parentArr.length;i++){ %>
+                                <option value="<%= parentArr[i].id %>" <% if(parentArr[i].id == categoryArr[j].id){ %> selected <% } %>><%= parentArr[i].title %></option>
+                                <% } %>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="input-group">
+                            <input type="button" class="btn btn-danger" data-operate="delSelect" style="outline:none;margin-right: 5px" value="删除">
+                        </div>
+                    </div>
+                </div>
+                <% } %>
+            </div>
         </fieldset>
     </form>
+</script>
+<script id="singItemDiv" type="text/html">
+    <div class="form-row singItem" style="margin-bottom: 15px">
+        <div class="col-6">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">分类</span>
+                </div>
+                <select name="categoryIdArr[]" class="form-control">
+                    <option value="">请选择</option>
+                    <% for(var i=0;i< parentArr.length;i++){ %>
+                    <option value="<%= parentArr[i].id %>"><%= parentArr[i].title %></option>
+                    <% } %>
+                </select>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="input-group">
+                <input type="button" class="btn btn-danger" data-operate="delSelect" style="outline:none;margin-right: 5px" value="删除">
+            </div>
+        </div>
+    </div>
 </script>
 <script data-main="/public/js/module/mall/channel"></script>
 @@include('../../inc-footer.html')

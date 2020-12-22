@@ -13,9 +13,17 @@ define("consts", function() {
                 '1':'<span style="color:green">有效</span>',
                 '2':'<span style="color:red">无效</span>'
             },
+            admin:{
+                '1':'<span style="color:green">启用</span>',
+                '2':'<span style="color:red">禁用</span>'
+            },
             user:{
                 '1':'<span style="color:green">允许登录</span>',
                 '2':'<span style="color:red">禁止登录</span>'
+            },
+            userType:{
+                '1':'<span style="color:orange">用户</span>',
+                '2':'<span style="color:green">管理员</span>'
             },
             orderStatus:{
                 '1':'<span style="color:deeppink">待处理</span>',

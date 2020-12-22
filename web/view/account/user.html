@@ -95,14 +95,25 @@
 </script>
 <!--金额变化列表模板-->
 <script id="moneyList" type="text/html">
+    <div class="form-row" style="margin-bottom: 15px">
+        <div class="col-6">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">用户ID</span>
+                </div>
+                <input type="text" disabled value="<%= userId %>" class="form-control">
+            </div>
+        </div>
+    </div>
     <div class="table-responsive">
         <table class="table table-hover table-bordered">
             <thead>
             <tr>
                 <th>ID</th>
-                <th>用户ID</th>
                 <th>来源</th>
-                <th>充值金额</th>
+                <th>金额</th>
+                <th>操作人</th>
+                <th>操作人类型</th>
                 <th>操作时间</th>
             </tr>
             </thead>
@@ -111,9 +122,10 @@
             <% for (var i = 0; i < dataArr.length; i++) { %>
             <tr data-id="<%= dataArr[i].id %>">
                 <td><%= dataArr[i].id %></td>
-                <td><%= dataArr[i].userId %></td>
                 <td><%= dataArr[i].source %></td>
                 <td><% if(dataArr[i].money){ %> <%= dataArr[i].money %> <% } %>元</td>
+                <td><%= dataArr[i].name %></td>
+                <td><%- dataArr[i].userTypeText %></td>
                 <td><%= dataArr[i].createTime %></td>
             </tr>
             <% } %>
@@ -180,6 +192,27 @@
                     <% } %>
                     <!--<h6 style="color: red;margin-top: 9px;margin-left: 10px">（提示：上传的商品封面图的尺寸为315×214或者787×399）</h6>-->
                     <input type="hidden" name="avatar" value="<%= dataArr.avatar %>">
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</script>
+<!-- 充值 -->
+<script id="rechargeDiv" type="text/html">
+    <form id="rechargeForm" disabled="true">
+        <fieldset>
+            <input type="hidden" name="id" value="<%= dataArr.id %>">
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">充值金额</span>
+                        </div>
+                        <input type="text" name="money" placeholder="请输入充值金额" class="form-control" required>
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">元</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </fieldset>

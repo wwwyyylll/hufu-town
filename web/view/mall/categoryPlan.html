@@ -4,7 +4,7 @@
 <main class="app-content">
     <div class="app-title">
         <div>
-            <h1><i class="fa fa-th-list"></i> 优化方案管理</h1>
+            <h1><i class="fa fa-th-list"></i> 优化方案管理 <span id="categoryItemTitle" style="color: red"></span> </h1>
         </div>
         <ul class="app-breadcrumb breadcrumb side">
             <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
@@ -114,9 +114,9 @@
                 <div class="col-6">
                     <div class="input-group">
                         <div class="input-group-prepend">
-                            <span class="input-group-text">分类ID</span>
+                            <span class="input-group-text">父级分类名称__当前分类名称</span>
                         </div>
-                        <input type="text" readonly value="<%= dataArr.categoryId %>" class="form-control">
+                        <input type="text" readonly value="<%= dataArr.parentCategoryTitle %>__<%= dataArr.categoryTitle %>" class="form-control">
                     </div>
                 </div>
                 <div class="col-6">

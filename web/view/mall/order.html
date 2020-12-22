@@ -24,17 +24,18 @@
                                 <button class="btn btn-primary dropdown-toggle" id="btnGroupDrop1" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
                                 <div class="dropdown-menu dropdown-menu-right">
                                     <a class="dropdown-item searchlabel" href="#">订单号</a>
-                                    <a class="dropdown-item searchlabel" href="#">会员运营ID</a>
+                                    <a class="dropdown-item searchlabel" href="#">手机号</a>
+                                    <a class="dropdown-item searchlabel" href="#">用户ID</a>
                                 </div>
                             </div>
                         </div>
                         <div class="btn-group" style="margin-left:5px">
                             <div id="search" class="btn btn-primary" style="outline:none">提交搜索</div>
                         </div>
-                        <div class="btn-group" style="margin-left:5px">
+                        <div class="btn-group" style="margin-left:5px;display: none">
                             <button id="exportExcel" class="btn btn-info" style="outline:none;margin-left: 3px">订单支付时间筛选</button>
                         </div>
-                        <div class="btn-group" style="float:right;margin-right: 5px">
+                        <div class="btn-group" style="float:right;margin-right: 5px;display: none">
                             <button id="batchImport" class="btn btn-primary" style="outline:none;margin-left: 3px">批量导入</button>
                         </div>
                     </div>
@@ -193,11 +194,11 @@
         </fieldset>
     </form>
 </script>
-<!-- 退款申请 Modal-->
+<!-- 退款 Modal-->
 <script id="refundModal" type="text/html">
     <form id="refundForm" disabled="true">
         <fieldset>
-            <input type="hidden" name="orderId" value="<%= dataArr.id %>">
+            <input type="hidden" name="id" value="<%= dataArr.id %>">
             <div class="form-row" style="margin-bottom: 15px">
                 <div class="col-12">
                     <div class="input-group">
@@ -222,35 +223,12 @@
                 <div class="col-12">
                     <div class="input-group">
                         <div class="input-group-prepend">
-                            <span class="input-group-text">实付款</span>
-                        </div>
-                        <input disabled type="text" value="<%= dataArr.amount %>" class="form-control">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">元</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="form-row" style="margin-bottom: 15px">
-                <div class="col-12">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
                             <span class="input-group-text">退款金额</span>
                         </div>
-                        <input type="text" name="amount" placeholder="请输入退款金额" value="<%= dataArr.amount %>" class="form-control" required>
+                        <input type="text" name="money" placeholder="请输入退款金额" value="<%= dataArr.money %>" class="form-control" required>
                         <div class="input-group-prepend">
                             <span class="input-group-text">元</span>
                         </div>
-                    </div>
-                </div>
-            </div>
-            <div class="form-row" style="margin-bottom: 15px">
-                <div class="col-12">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">退款数量</span>
-                        </div>
-                        <input type="text" name="num" placeholder="请输入退款数量" value="<%= dataArr.num %>" class="form-control" required>
                     </div>
                 </div>
             </div>
@@ -410,46 +388,65 @@
         </fieldset>
     </form>
 </script>
+<!-- 状态变更日志列表 -->
+<script id="logList" type="text/html">
+    <div class="row" style="margin-bottom: 15px">
+        <div class="col-6">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">订单号</span>
+                </div>
+                <input type="text" disabled value="<%= orderNo %>" class="form-control">
+            </div>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>状态</th>
+                <th>操作人</th>
+                <th>操作人类型</th>
+                <th>操作时间</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% if (dataArr.length > 0) { %>
+            <% for (var i = 0; i < dataArr.length; i++) { %>
+            <tr data-id="<%= dataArr[i].id %>">
+                <td><%= dataArr[i].id %></td>
+                <td><%- dataArr[i].statusText %></td>
+                <td><%= dataArr[i].name %></td>
+                <td><%- dataArr[i].operatorTypeText %></td>
+                <td><%= dataArr[i].createTime %></td>
+            </tr>
+            <% } %>
+            <% } else { %>
+            <tr>
+                <td colspan="10">没有符合条件的记录</td>
+            </tr>
+            <% } %>
+            </tbody>
+        </table>
+        <div id="moneyPagination" class="d-flex justify-content-end">
+        </div>
+    </div>
+</script>
 <!-- 列表模板 -->
 <script id="visaListItem" type="text/html">
     <thead>
     <tr>
-
-        categoryId: "2"
-        categoryTitle: "分类111"
-        channelId: "8"
-        channelTitle: "channel2"
-        createTime: "2020-12-18 17:18:21"
-        id: "13"
-        memo: null
-        mobile: "13666666666"
-        money: "100.00"
-        num: "100"
-        orderNo: "AC18831017158278"
-        parentCategoryId: "1"
-        parentCategoryTitle: "分类1"
-        planId: "1"
-        planTitle: "真人阅读"
-        refundMoney: null
-        status: "3"
-        url: "http://wfdfd.com"
-        userId: "2"
-
-        分类ID 分类标题 渠道ID 渠道标题 创建时间 ID 备注 手机号 金额 数量 订单号 父级分类ID 父级分类标题 优化方案ID 优化方案标题 退款金额 状态 链接 用户ID
-
         <th>ID</th>
+        <th>用户ID</th>
         <th>订单号</th>
-        <th>会员运营ID</th>
-        <th style="width:12%;word-wrap: break-word;word-break:break-all;">商品标题</th>
-        <!--<th>店铺名称</th>-->
-        <th>付款金额</th>
-        <th>付款预估收入</th>
-        <!--<th class="em-min-8">-->
-            <!--<div>订单支付时间</div>-->
-            <!--<input type="text" autocomplete="off" class="em-12 py-0 px-1" placeholder="请选择筛选日期..." id="time">-->
-        <!--</th>-->
-        <th>订单支付时间</th>
-        <th>淘状态</th>
+        <th>金额</th>
+        <th>数量</th>
+        <th>手机号</th>
+        <th style="width:12%;word-wrap: break-word;word-break:break-all;">链接</th>
+        <th>分类</th>
+        <th>渠道标题</th>
+        <th style="width:12%;word-wrap: break-word;word-break:break-all;">备注</th>
         <th class="em-min-7">
             <div class="dropdown">
                 <span class="dropdown-toggle" id="dropStatus" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -457,26 +454,14 @@
                 </span>
                 <div class="dropdown-menu" aria-labelledby="dropdownVisaStatus" id="dropStatusOptions">
                     <a class="dropdown-item" href="javascript:" data-id="">所有</a>
-                    <a class="dropdown-item" href="javascript:" data-id="1">已付款</a>
-                    <a class="dropdown-item" href="javascript:" data-id="2">已收货</a>
-                    <a class="dropdown-item" href="javascript:" data-id="3">已结算</a>
-                    <a class="dropdown-item" href="javascript:" data-id="4">已失效</a>
-                    <a class="dropdown-item" href="javascript:" data-id="5">已维权退单</a>
+                    <a class="dropdown-item" href="javascript:" data-id="1">待处理</a>
+                    <a class="dropdown-item" href="javascript:" data-id="2">处理中</a>
+                    <a class="dropdown-item" href="javascript:" data-id="3">已完成</a>
+                    <a class="dropdown-item" href="javascript:" data-id="4">已退款</a>
                 </div>
             </div>
         </th>
-        <!--<th class="em-min-7">-->
-            <!--<div class="dropdown">-->
-                <!--<span class="dropdown-toggle" id="dropSettlement" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">-->
-                    <!--<%= settlementText %>-->
-                <!--</span>-->
-                <!--<div class="dropdown-menu" aria-labelledby="dropSettlement" id="dropSettlementOptions">-->
-                    <!--<a class="dropdown-item" href="javascript:" data-id="">所有</a>-->
-                    <!--<a class="dropdown-item" href="javascript:" data-id="1">已结算</a>-->
-                    <!--<a class="dropdown-item" href="javascript:" data-id="2">未结算</a>-->
-                <!--</div>-->
-            <!--</div>-->
-        <!--</th>-->
+        <th>创建时间</th>
         <th style="width:12%;word-wrap: break-word;word-break:break-all;">操作</th>
     </tr>
     </thead>
@@ -485,26 +470,31 @@
     <% for (var i = 0; i < dataArr.length; i++) { %>
     <tr data-id="<%= dataArr[i].id %>">
         <td><%= dataArr[i].id %></td>
+        <td><%= dataArr[i].userId %></td>
+        <td><%= dataArr[i].orderNo %></td>
+        <td><% if(dataArr[i].money){ %> <%= dataArr[i].money %><% } %>元</td>
+        <td><%= dataArr[i].num %></td>
+        <td><%= dataArr[i].mobile %></td>
+        <td style="width:12%;word-wrap: break-word;word-break:break-all;"><%= dataArr[i].url %></td>
         <td>
-            <%= dataArr[i].orderNo %>
-            <% if(dataArr[i].subOrderNo){ %>
-            <div style="color:red;margin-top: 5px"><%= dataArr[i].subOrderNo %></div>
+            <div>
+                <a href="@@HOSTview/mall/category.html?title=<%= dataArr[i].categoryTitle %>" target="_blank" style="text-decoration: underline"><%= dataArr[i].categoryTitle %></a>
+            </div>
+            <% if(dataArr[i].parentCategoryTitle){ %>
+            <div style="color:deeppink;margin-top: 5px">父级：<%= dataArr[i].parentCategoryTitle %></div>
             <% } %>
         </td>
-        <td><%= dataArr[i].memberOperationId %></td>
-        <td><%= dataArr[i].itemTitle %></td>
-        <!--<td><%= dataArr[i].shopName %></td>-->
-        <td><%= dataArr[i].amount %>元</td>
-        <td><%= dataArr[i].predictPayAmount %></td>
-        <td><%= dataArr[i].orderCreateTime %></td>
-        <td><%= dataArr[i].taobaoOrderStatus %></td>
+        <td>
+            <a href="@@HOSTview/mall/channel.html?title=<%= dataArr[i].channelTitle %>" target="_blank" style="text-decoration: underline"><%= dataArr[i].channelTitle %></a>
+        </td>
+        <td style="width:12%;word-wrap: break-word;word-break:break-all;"><%= dataArr[i].memo %></td>
         <td>
             <%- dataArr[i].statusText %>
-            <% if(dataArr[i].isSettlement==1){ %>
-            <div style="margin-top: 5px"><%= dataArr[i].settlementTime_sys %></div>
+            <% if(dataArr[i].status==4){ %>
+            <div style="margin-top: 5px;color:red">退款金额：<%= dataArr[i].refundMoney %>元</div>
             <% } %>
         </td>
-        <!--<td><%- dataArr[i].isSettlementText %></td>-->
+        <td><%= dataArr[i].createTime %></td>
         <td style="width:12%;word-wrap: break-word;word-break:break-all;">
             <div class="d-flex flex-wrap justify-content-center">
                 <%- dataArr[i].materialButtonGroup %>

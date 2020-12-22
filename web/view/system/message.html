@@ -53,7 +53,7 @@
         <th>ID</th>
         <th style="width:15%;word-wrap: break-word;word-break:break-all;">标题</th>
         <th>排序</th>
-        <th style="width:15%;word-wrap: break-word;word-break:break-all;">内容</th>
+        <!--<th style="width:15%;word-wrap: break-word;word-break:break-all;">内容</th>-->
         <th class="em-min-7">
             <div class="dropdown">
                 <span class="dropdown-toggle" id="dropStatus" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -77,7 +77,7 @@
         <td><%= dataArr[i].id %></td>
         <td style="width:15%;word-wrap: break-word;word-break:break-all;"><%= dataArr[i].title %></td>
         <td><%= dataArr[i].idx %></td>
-        <td style="width:15%;word-wrap: break-word;word-break:break-all;"><%= dataArr[i].content %></td>
+        <!--<td style="width:15%;word-wrap: break-word;word-break:break-all;"><%= dataArr[i].content %></td>-->
         <td><%- dataArr[i].statusText %></td>
         <td><%= dataArr[i].createTime %></td>
         <td>
@@ -117,13 +117,16 @@
                     </div>
                 </div>
             </div>
+            <div class="form-row" style="margin-bottom: 10px">
+                <div class="col-12">
+                    <h5>消息内容：</h5>
+                </div>
+            </div>
             <div class="form-row" style="margin-bottom: 15px">
                 <div class="col-12">
                     <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">内容</span>
-                        </div>
-                        <textarea style="resize:vertical;min-height: 70px" class="form-control" name="content" required><%= dataArr.content %></textarea>
+                        <div id="editor"></div>
+                        <input type="hidden" name="content" value="<%= dataArr.content %>">
                     </div>
                 </div>
             </div>
@@ -131,4 +134,7 @@
     </form>
 </script>
 <script data-main="/public/js/module/system/message"></script>
+<!-- 注意， 只需要引用 JS，无需引用任何 CSS ！！！-->
+<script type="text/javascript" src="/public/js/plugins/wangeditor/release/wangEditor.min.js"></script>
 @@include('../../inc-footer.html')
+<script type="text/javascript" src="/public/js/plugins/jquery-ui-1.10.4.min.js"></script>

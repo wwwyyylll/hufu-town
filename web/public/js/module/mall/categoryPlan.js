@@ -88,6 +88,8 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
             dataArr:{}
         };
         initialData.dataArr.categoryId = categoryId;
+        initialData.dataArr.categoryTitle = categoryTitle;
+        initialData.dataArr.parentCategoryTitle = parentCategoryTitle;
         utils.renderModal('新增优化方案', template('modalDiv',initialData), function(){
             if($("#visaPassportForm").valid()){
                 utils.loading(true);
@@ -101,7 +103,7 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
             }
         }, 'lg');
         uploadFile();
-    })
+    });
 
     //页面操作配置
     var operates = {
@@ -113,6 +115,8 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
                     dataArr:data
                 };
                 getByIdData.dataArr.categoryId = categoryId;
+                getByIdData.dataArr.categoryTitle = categoryTitle;
+                getByIdData.dataArr.parentCategoryTitle = parentCategoryTitle;
                 utils.renderModal('编辑优化方案', template('modalDiv', getByIdData), function(){
                     if($("#visaPassportForm").valid()) {
                         utils.loading(true);
@@ -135,6 +139,8 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
                     dataArr:data
                 };
                 getByIdData.dataArr.categoryId = categoryId;
+                getByIdData.dataArr.categoryTitle = categoryTitle;
+                getByIdData.dataArr.parentCategoryTitle = parentCategoryTitle;
                 utils.renderModal('查看优化方案', template('modalDiv', getByIdData),'', 'lg');
                 $("#visaPassportForm").append($("fieldset").prop('disabled', true));
             });
@@ -162,7 +168,10 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
             var id = $this.closest("tr").attr("data-id");
             window.open("@@HOSTview/mall/categoryPlan.html?id=" + id);
         }
-    }
+    };
+
+    var parentCategoryTitle = "";
+    var categoryTitle = "";
 
     var loc = location.href;
     var n1 = loc.length;//地址的总长度
@@ -173,7 +182,9 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
     if(urlParam[0].indexOf("html")!='-1'){
         categoryId = '';
     }else{
-        categoryId = urlParam[0];
+        categoryId = urlParam[0].split("&")[0];
+        parentCategoryTitle = urlParam[1].split("&")[0];
+        categoryTitle = urlParam[2];
     }
 
     var param = {
@@ -190,6 +201,7 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
                 n.statusText = consts.status.ordinary[n.status];
                 (n.status=="1")? n.materialButtonGroup = comButtons + stopButton : n.materialButtonGroup = comButtons + startBouutn;
             });
+            $("#categoryItemTitle").text("（" + parentCategoryTitle + "__" + categoryTitle + "）");
             data.statusText = listDropDown.statusText;
             $sampleTable.html(template('visaListItem', data));
             utils.bindPagination($visaPagination, param, loadData);

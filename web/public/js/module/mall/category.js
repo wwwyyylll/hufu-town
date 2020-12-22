@@ -161,14 +161,28 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
         //优化方案
         plan:function($this){
             var id = $this.closest("tr").attr("data-id");
-            window.open("@@HOSTview/mall/categoryPlan.html?id=" + id);
+            var parentCategoryTitle = $this.closest("tr").find("td").eq(4).text();
+            var categoryTitle = $this.closest("tr").find("td").eq(1).text();
+            window.open("@@HOSTview/mall/categoryPlan.html?id=" + id + "&parentCategoryTitle=" + parentCategoryTitle + "&categoryTitle=" + categoryTitle);
         }
+    };
+
+    var loc = location.href;
+    var n1 = loc.length;//地址的总长度
+    var n2 = loc.indexOf("=");//取得=号的位置
+    var id = decodeURI(loc.substr(n2+1,n1-n2));//从=号后面的内容
+    var urlParam = id.split("=");
+    var categoryTitle = '';
+    if(urlParam[0].indexOf("html")!='-1'){
+        categoryTitle = '';
+    }else{
+        categoryTitle = urlParam[0];
     }
 
     var param = {
         pageNo: 1,
         pageSize:10,
-        title:'',
+        title:categoryTitle,
         status:'',
         parentId:''
     };
