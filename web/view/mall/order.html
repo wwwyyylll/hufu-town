@@ -26,6 +26,7 @@
                                     <a class="dropdown-item searchlabel" href="#">订单号</a>
                                     <a class="dropdown-item searchlabel" href="#">手机号</a>
                                     <a class="dropdown-item searchlabel" href="#">用户ID</a>
+                                    <!--<a class="dropdown-item searchlabel" href="#">渠道</a>-->
                                 </div>
                             </div>
                         </div>
@@ -438,15 +439,28 @@
     <thead>
     <tr>
         <th>ID</th>
-        <th>用户ID</th>
         <th>订单号</th>
-        <th>金额</th>
-        <th>数量</th>
+        <th>用户Id</th>
         <th>手机号</th>
-        <th style="width:12%;word-wrap: break-word;word-break:break-all;">链接</th>
+        <!--<th>渠道</th>-->
+        <th class="em-min-7">
+            <div class="dropdown">
+                <span class="dropdown-toggle" id="dropChannel" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <%= channelText %>
+                </span>
+                <div class="dropdown-menu" aria-labelledby="dropChannel" id="dropChannelOptions">
+                    <a class="dropdown-item" href="javascript:" data-id="">所有</a>
+                    <% for(var i=0;i< channelArr.length;i++){ %>
+                    <a class="dropdown-item" href="javascript:" data-id="<%= channelArr[i].id %>"><%= channelArr[i].title %></a>
+                    <% } %>
+                </div>
+            </div>
+        </th>
         <th>分类</th>
-        <th>渠道标题</th>
-        <th style="width:12%;word-wrap: break-word;word-break:break-all;">备注</th>
+        <th style="width:10%;word-wrap: break-word;word-break:break-all;">作品连接</th>
+        <th>优化方案</th>
+        <th>优化数量</th>
+        <th>费用</th>
         <th class="em-min-7">
             <div class="dropdown">
                 <span class="dropdown-toggle" id="dropStatus" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -461,8 +475,9 @@
                 </div>
             </div>
         </th>
+        <th style="width:10%;word-wrap: break-word;word-break:break-all;">备注</th>
         <th>创建时间</th>
-        <th style="width:12%;word-wrap: break-word;word-break:break-all;">操作</th>
+        <th style="width:10%;word-wrap: break-word;word-break:break-all;">操作</th>
     </tr>
     </thead>
     <tbody>
@@ -470,32 +485,32 @@
     <% for (var i = 0; i < dataArr.length; i++) { %>
     <tr data-id="<%= dataArr[i].id %>">
         <td><%= dataArr[i].id %></td>
-        <td><%= dataArr[i].userId %></td>
         <td><%= dataArr[i].orderNo %></td>
-        <td><% if(dataArr[i].money){ %> <%= dataArr[i].money %><% } %>元</td>
-        <td><%= dataArr[i].num %></td>
+        <td><%= dataArr[i].userId %></td>
         <td><%= dataArr[i].mobile %></td>
-        <td style="width:12%;word-wrap: break-word;word-break:break-all;"><%= dataArr[i].url %></td>
-        <td>
-            <div>
-                <a href="@@HOSTview/mall/category.html?title=<%= dataArr[i].categoryTitle %>" target="_blank" style="text-decoration: underline"><%= dataArr[i].categoryTitle %></a>
-            </div>
-            <% if(dataArr[i].parentCategoryTitle){ %>
-            <div style="color:deeppink;margin-top: 5px">父级：<%= dataArr[i].parentCategoryTitle %></div>
-            <% } %>
-        </td>
         <td>
             <a href="@@HOSTview/mall/channel.html?title=<%= dataArr[i].channelTitle %>" target="_blank" style="text-decoration: underline"><%= dataArr[i].channelTitle %></a>
         </td>
-        <td style="width:12%;word-wrap: break-word;word-break:break-all;"><%= dataArr[i].memo %></td>
+        <td>
+            <% if(dataArr[i].parentCategoryTitle){ %>
+            <a href="@@HOSTview/mall/category.html?title=<%= dataArr[i].categoryTitle %>" target="_blank" style="text-decoration: underline"><%= dataArr[i].parentCategoryTitle %>__<%= dataArr[i].categoryTitle %></a>
+            <% }else{ %>
+            <a href="@@HOSTview/mall/category.html?title=<%= dataArr[i].categoryTitle %>" target="_blank" style="text-decoration: underline"><%= dataArr[i].categoryTitle %></a>
+            <% } %>
+        </td>
+        <td style="width:10%;word-wrap: break-word;word-break:break-all;"><%= dataArr[i].url %></td>
+        <td><%= dataArr[i].planTitle %></td>
+        <td><%= dataArr[i].num %></td>
+        <td><% if(dataArr[i].money){ %> <%= dataArr[i].money %><% } %>元</td>
         <td>
             <%- dataArr[i].statusText %>
             <% if(dataArr[i].status==4){ %>
             <div style="margin-top: 5px;color:red">退款金额：<%= dataArr[i].refundMoney %>元</div>
             <% } %>
         </td>
+        <td style="width:10%;word-wrap: break-word;word-break:break-all;"><%= dataArr[i].memo %></td>
         <td><%= dataArr[i].createTime %></td>
-        <td style="width:12%;word-wrap: break-word;word-break:break-all;">
+        <td style="width:10%;word-wrap: break-word;word-break:break-all;">
             <div class="d-flex flex-wrap justify-content-center">
                 <%- dataArr[i].materialButtonGroup %>
             </div>

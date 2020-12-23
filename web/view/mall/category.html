@@ -53,7 +53,6 @@
         <th>ID</th>
         <th style="width:12%;word-wrap: break-word;word-break:break-all;">标题</th>
         <th>排序</th>
-        <th>图片</th>
         <th class="em-min-7">
             <div class="dropdown">
                 <span class="dropdown-toggle" id="dropParent" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -67,6 +66,7 @@
                 </div>
             </div>
         </th>
+        <th>当前优化方案数量</th>
         <th class="em-min-7">
             <div class="dropdown">
                 <span class="dropdown-toggle" id="dropStatus" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -90,14 +90,8 @@
         <td><%= dataArr[i].id %></td>
         <td style="width:12%;word-wrap: break-word;word-break:break-all;"><%= dataArr[i].title %></td>
         <td><%= dataArr[i].idx %></td>
-        <td>
-            <% if(dataArr[i].imgUrl){ %>
-            <a href="<%= dataArr[i].imgUrl %>" target="_blank">
-                <img src="<%= dataArr[i].imgUrl %>" style="display: inline-block;width: 50px;height: 50px">
-            </a>
-            <% } %>
-        </td>
         <td><%= dataArr[i].parentTitle %></td>
+        <td><%= dataArr[i].planCnt %></td>
         <td><%- dataArr[i].statusText %></td>
         <td><%= dataArr[i].createTime %></td>
         <td>
@@ -144,7 +138,7 @@
                             <span class="input-group-text">父级分类</span>
                         </div>
                         <select name="parentId" class="form-control">
-                            <option value="">请选择</option>
+                            <option value="0">请选择</option>
                             <% for(var i=0;i < parentArr.length;i++){ %>
                             <% if(dataArr.parentId != 0){ %>
                             <option value="<%= parentArr[i].id %>" <% if(dataArr.parentId == parentArr[i].id){ %> selected <% } %>><%= parentArr[i].title %></option>
@@ -159,28 +153,26 @@
                     <% } %>
                 </div>
             </div>
-            <!--<div class="form-row uploadFile">-->
-                <!--<div class="input-group">-->
-                    <!--<span style="margin-top:6px;margin-right: 10px">上传图片</span>-->
-                    <!--<label class="file-label btn btn-primary mb-0 mr-2"><input type="file" name="avatar" class="uploadImg d-none">选择图片文件</label>-->
-                    <!--<button type="button" class="btn btn-default avatarUpload" disabled>上传文件</button>-->
-                    <!--<span class="temporaryFile" style="display: none"></span>-->
-                    <!--<% if (dataArr.imgUrl) { %>-->
-                    <!--<h6 style="margin-left: 10px;margin-bottom: 0" class="imgUrl">-->
-                        <!--<a target='_blank' href='<%= dataArr.imgUrl %>'>-->
-                            <!--<img style="display: inline-block;width: 65px;height: 35px" src="<%= dataArr.imgUrl %>">-->
-                        <!--</a>-->
-                    <!--</h6>-->
-                    <!--</h6>-->
-                    <!--<% } else { %>-->
-                    <!--<h6 style="margin-top: 9px;margin-left: 10px" class="imgUrl"><span style="color:red">暂无图片</span></h6>-->
-                    <!--<% } %>-->
-                    <!--&lt;!&ndash;<h6 style="color: red;margin-top: 9px;margin-left: 10px">（提示：上传的商品封面图的尺寸为315×214或者787×399）</h6>&ndash;&gt;-->
-                    <!--<input type="hidden" name="imgUrl" value="<%= dataArr.imgUrl %>">-->
-                <!--</div>-->
-            <!--</div>-->
+            <div id="tipsDiv" <% if(dataArr.id){ %> <% if(dataArr.parentId != 0){ %> style="display:block" <% }else{ %> style="display:none" <% } %> <% }else{ %> style="display:none" <% } %>>
+                <div class="form-row" style="margin-bottom: 10px">
+                    <div class="col-12">
+                        <h5>注意事项：</h5>
+                    </div>
+                </div>
+                <div class="form-row" style="margin-bottom: 15px">
+                    <div class="col-12">
+                        <div class="input-group">
+                            <div id="editor"></div>
+                            <input type="hidden" name="tips" value="<%= dataArr.tips %>">
+                        </div>
+                    </div>
+                </div>
+            </div>
         </fieldset>
     </form>
 </script>
 <script data-main="/public/js/module/mall/category"></script>
+<!-- 注意， 只需要引用 JS，无需引用任何 CSS ！！！-->
+<script type="text/javascript" src="/public/js/plugins/wangeditor/release/wangEditor.min.js"></script>
 @@include('../../inc-footer.html')
+<script type="text/javascript" src="/public/js/plugins/jquery-ui-1.10.4.min.js"></script>

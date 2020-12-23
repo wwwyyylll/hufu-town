@@ -128,7 +128,7 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
         //查看
         look:function($this){
             var id = $this.closest("tr").attr("data-id");
-            var orderNo = $this.closest("tr").find("td").eq(2).text();
+            var orderNo = $this.closest("tr").find("td").eq(1).text();
             window.open("@@HOSTview/mall/orderDetails.html?orderNo=" + orderNo);
         },
         //处理
@@ -152,8 +152,8 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
         //退款
         refund:function($this){
             var id = $this.closest("tr").attr("data-id");
-            var orderNo = $this.closest("tr").find("td").eq(2).text();
-            var moneyText = $this.closest("tr").find("td").eq(3).text();
+            var orderNo = $this.closest("tr").find("td").eq(1).text();
+            var moneyText = $this.closest("tr").find("td").eq(9).text();
             var money = moneyText.substring(0,moneyText.length-1);
             var initialData = {
                 dataArr:{
@@ -176,7 +176,7 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
         //状态变更日志列表
         getLogList:function($this){
             var id = $this.closest("tr").attr("data-id");
-            var orderNo = $this.closest("tr").find("td").eq(2).text();
+            var orderNo = $this.closest("tr").find("td").eq(1).text();
             utils.ajaxSubmit(apis.order.getOrderLogListsByOrderId, {id:id}, function (data) {
                 $.each(data,function(i,n){
                     n.statusText = consts.status.orderStatus[n.status];
@@ -213,7 +213,8 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
         status:'',
         orderNo:'',
         mobile:'',
-        userId:''
+        userId:'',
+        channelId:''
     };
 
     $("input[name=warnParam]").on("click",function(){
@@ -228,16 +229,16 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
         }
     });
 
-    var showTypeArr;
-    var parentArr;
-    function getConstsLists(){
-        utils.ajaxSubmit(apis.order.getConstLists, '', function (data) {
-            showTypeArr = data.showTypeArr;
-        });
-    }
-    function getParentLists(){
-        utils.ajaxSubmit(apis.order.getParentLists, '', function (data) {
-            parentArr = data;
+    var channelArr;
+    function getChannelArr(){
+        var channelParam = {
+            pageNo: 1,
+            pageSize:50,
+            status:'',
+            title:''
+        };
+        utils.ajaxSubmit(apis.channel.getLists, channelParam, function (data) {
+            channelArr = data.dataArr;
         });
     }
     function loadData() {
@@ -246,7 +247,7 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
                 n.statusText = consts.status.orderStatus[n.status];
                 if(n.status==1){
                     //待处理
-                    n.materialButtonGroup = lookButton + doingButton + getLogListButton;
+                    n.materialButtonGroup = lookButton + doingButton + refundButton + getLogListButton;
                 }else if(n.status==2){
                     //处理中
                     n.materialButtonGroup = lookButton + completeBouutn + refundButton + getLogListButton;
@@ -259,7 +260,8 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
                 }
             });
             data.statusText = listDropDown.statusText;
-            data.settlementText = listDropDown.settlementText;
+            data.channelArr = channelArr;
+            data.channelText = listDropDown.channelText;
             $sampleTable.html(template('visaListItem', data));
             utils.bindPagination($visaPagination, param, loadData);
             $visaPagination.html(utils.pagination(parseInt(data.cnt), param.pageNo));
@@ -268,23 +270,22 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
         });
     }
     // 页面首次加载列表数据
-    //getConstsLists();
-    //getParentLists();
-    //setTimeout(function(){
+    getChannelArr();
+    setTimeout(function(){
         loadData();
-    //},100);
+    },100);
     utils.bindList($(document), operates);
     var listDropDown = {
         statusText:'状态',
-        settlementText:'结算状态'
+        channelText:'渠道'
     };
     $sampleTable.on('click', '#dropStatusOptions a[data-id]', function () {
         param.status = $(this).data('id');
         ($(this).text()=="所有") ? listDropDown.statusText = "状态" : listDropDown.statusText = $(this).text();
         loadData();
-    }).on('click', '#dropSettlementOptions a[data-id]', function () {
-        param.isSettlement = $(this).data('id');
-        ($(this).text()=="所有") ? listDropDown.settlementText = "结算状态" : listDropDown.settlementText = $(this).text();
+    }).on('click', '#dropChannelOptions a[data-id]', function () {
+        param.channelId = $(this).data('id');
+        ($(this).text()=="所有") ? listDropDown.channelText = "渠道" : listDropDown.channelText = $(this).text();
         loadData();
     });
     setInterval(function () {
@@ -299,19 +300,18 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
     },500);
     $("#searchCont").on("input",function(){
         var selectSearchLabel = $("#selectsearchlabel").text();
-        if(selectSearchLabel=="用户昵称"){
+        if(selectSearchLabel=="渠道"){
             var param = {
                 pageNo: 1,
                 pageSize:50,
                 status:'',
-                mobile:'',
-                nickName:$("#searchCont").val()
+                title:$("#searchCont").val()
             };
-            utils.ajaxSubmit(apis.user.getLists, param, function (data) {
+            utils.ajaxSubmit(apis.channel.getLists, param, function (data) {
                 if(data.dataArr.length!=0){
                     var $economyAbilityItem = '';
                     $.each(data.dataArr, function (i, v) {
-                        $economyAbilityItem += '<div data-id="'+ v.id +'" class="economy-ability-item">'+ v.nickName +'</div>'
+                        $economyAbilityItem += '<div data-id="'+ v.id +'" class="economy-ability-item">'+ v.title +'</div>'
                     })
                     $('.ability-list').remove();
                     var $abilityList = '<div class="ability-list">'+ $economyAbilityItem +'</div>';
@@ -320,47 +320,7 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
                     $('.economy-ability-item').click(function(){
                         $('.ability-list').remove();
                         var $index = $(this).index();
-                        $("#searchCont").val(data.dataArr[$index].nickName);
-                        $("#searchCont").attr("data-id",data.dataArr[$index].id);
-                    });
-                }else{
-                    $('.ability-list').remove();
-                    var $abilityList = '<div class="ability-list">'+
-                        '<div data-id="-1" class="economy-ability-item">无数据</div>'
-                        +'</div>';
-                    $("#searchCont").closest('.economy-wards').append($abilityList);
-
-                    $('.economy-ability-item').click(function(){
-                        $('.ability-list').remove();
-                        var $index = $(this).index();
-                        $("#searchCont").val("无数据");
-                        $("#searchCont").attr("data-id","-1");
-                    });
-                }
-            });
-        }else if(selectSearchLabel=="供应商"){
-            var supplierParam = {
-                pageNo: 1,
-                pageSize:50,
-                name:$("#searchCont").val(),
-                status:'',
-                source:'',
-                accountType:''
-            };
-            utils.ajaxSubmit(apis.mallSupplier.getLists, supplierParam, function (data) {
-                if(data.dataArr.length!=0){
-                    var $economyAbilityItem = '';
-                    $.each(data.dataArr, function (i, v) {
-                        $economyAbilityItem += '<div data-id="'+ v.id +'" class="economy-ability-item">'+ v.name +'</div>'
-                    })
-                    $('.ability-list').remove();
-                    var $abilityList = '<div class="ability-list">'+ $economyAbilityItem +'</div>';
-                    $("#searchCont").closest('.economy-wards').append($abilityList);
-
-                    $('.economy-ability-item').click(function(){
-                        $('.ability-list').remove();
-                        var $index = $(this).index();
-                        $("#searchCont").val(data.dataArr[$index].name);
+                        $("#searchCont").val(data.dataArr[$index].title);
                         $("#searchCont").attr("data-id",data.dataArr[$index].id);
                     });
                 }else{
@@ -385,20 +345,26 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
         //判断是什么条件搜索
         var selectSearchLabel = $("#selectsearchlabel").text();
         if(selectSearchLabel=="订单号"){
-            //订单号搜索
             param.orderNo = $("#searchCont").val();
             param.mobile = '';
             param.userId = '';
+            param.channelId = '';
             loadData();
         }else if(selectSearchLabel=="手机号"){
-            //商品标题搜索
             param.mobile = $("#searchCont").val();
             param.orderNo = '';
             param.userId = '';
+            param.channelId = '';
             loadData();
         }else if(selectSearchLabel=="用户ID"){
-            //商品标题搜索
             param.userId = $("#searchCont").val();
+            param.orderNo = '';
+            param.mobile = '';
+            param.channelId = '';
+            loadData();
+        }else if(selectSearchLabel=="渠道"){
+            param.channelId = $("#searchCont").attr("data-id");
+            param.userId = '';
             param.orderNo = '';
             param.mobile = '';
             loadData();

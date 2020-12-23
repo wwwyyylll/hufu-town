@@ -83,6 +83,16 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
         });
     }
 
+    function parentIdChange(){
+        $("select[name=parentId]").on("change",function(){
+            if($(this).val()!=0){
+                $("#tipsDiv").show();
+            }else{
+                $("#tipsDiv").hide();
+            }
+        })
+    }
+
     //新增分类
     $addModal.on("click",function(){
         var initialData = {
@@ -90,19 +100,117 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
             parentArr:parentArr
         };
         utils.renderModal('新增分类', template('modalDiv',initialData), function(){
-            if($("#visaPassportForm").valid()){
-                utils.loading(true);
-                utils.ajaxSubmit(apis.category.create,$("#visaPassportForm").serialize(),function(data){
-                    utils.loading(false);
-                    hound.success("添加成功","",1000);
-                    utils.modal.modal('hide');
-                    param.pageNo = 1;
-                    loadData();
-                })
+            //if($("#visaPassportForm").valid()){
+            //    utils.loading(true);
+            //    utils.ajaxSubmit(apis.category.create,$("#visaPassportForm").serialize(),function(data){
+            //        utils.loading(false);
+            //        hound.success("添加成功","",1000);
+            //        utils.modal.modal('hide');
+            //        param.pageNo = 1;
+            //        loadData();
+            //    })
+            //}
+
+            var editerContent = $(".w-e-text");
+            var editerImg = editerContent.find("img");
+            //统计富文本编辑器中图片的数量
+            if(editerImg.length>0){
+                //图片src的长度大于500的需要上传，小于500的直接提交
+                var submitImgArr = [];
+                for(var i=0;i<editerImg.length;i++){
+                    if(editerImg.eq(i).attr("src").length>500){
+                        submitImgArr.push(editerImg.eq(i));
+                    }
+                }
+
+                function func_digui(arry,len){
+                    var temp;
+                    for(i=0;i<len;i++){
+                        if(i==0){
+                            temp =arry[0];
+                            arry.splice(i,1);
+                            $.ajax({
+                                type:'POST',
+                                url: "@@API",
+                                data: {
+                                    c:"img",
+                                    a:"uploadForBase64",
+                                    linkUserName:consts.param.linkUserName,
+                                    linkPassword:consts.param.linkPassword,
+                                    signature:consts.param.signature,
+                                    userToken: $.cookie('userToken'),
+                                    content:temp.attr("src")
+                                },
+                                dataType: 'json',
+                                success:function(data){
+                                    temp.attr("src",data.result);
+                                    len = arry.length;
+                                    if(len ==0){
+                                        return;
+                                    }
+                                    func_digui(arry,len);
+                                }
+                            });
+                        }
+                    }
+                }
+                if(submitImgArr.length!=0){
+                    func_digui(submitImgArr,submitImgArr.length);
+                    setTimeout(function(){
+                        var canPost = true;
+                        for(var i=0;i<editerImg.length;i++){
+                            if(editerImg.eq(i).attr("src").length>500){
+                                canPost = false;
+                                break;
+                            }
+                        }
+                        if(canPost){
+                            if($("#visaPassportForm").valid()){
+                                $("input[name=tips]").val($(".w-e-text").html());
+                                utils.ajaxSubmit(apis.category.create,$("#visaPassportForm").serialize(),function(data){
+                                    hound.success("添加成功","",1000);
+                                    utils.modal.modal('hide');
+                                    param.pageNo = 1;
+                                    loadData();
+                                })
+                            }
+                        }
+                    },1500);
+                }else{
+                    if($("#visaPassportForm").valid()){
+                        $("input[name=tips]").val($(".w-e-text").html());
+                        utils.ajaxSubmit(apis.category.create,$("#visaPassportForm").serialize(),function(data){
+                            hound.success("添加成功","",1000);
+                            utils.modal.modal('hide');
+                            param.pageNo = 1;
+                            loadData();
+                        })
+                    }
+                }
+            }else{
+                if($("#visaPassportForm").valid()){
+                    $("input[name=tips]").val($(".w-e-text").html());
+                    utils.ajaxSubmit(apis.category.create,$("#visaPassportForm").serialize(),function(data){
+                        hound.success("添加成功","",1000);
+                        utils.modal.modal('hide');
+                        param.pageNo = 1;
+                        loadData();
+                    })
+                }
             }
+
         }, 'lg');
+        var E = window.wangEditor;
+        var editor = new E('#editor');
+        editor.customConfig.showLinkImg = false;         // 隐藏“网络图片”tab
+        editor.customConfig.uploadImgShowBase64 = true;   // 使用 base64 保存图片
+        editor.create();
+        $(".w-e-text-container").css({"height":"300px"});
+        $(".w-e-text-container").css({"z-index":"100"});
+        $("#editor").find(".w-e-menu").css({"z-index":"101"});
         uploadFile();
-    })
+        parentIdChange();
+    });
 
     //页面操作配置
     var operates = {
@@ -115,17 +223,121 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
                     parentArr:parentArr
                 };
                 utils.renderModal('编辑分类', template('modalDiv', getByIdData), function(){
-                    if($("#visaPassportForm").valid()) {
-                        utils.loading(true);
-                        utils.ajaxSubmit(apis.category.updateById, $("#visaPassportForm").serialize(), function (data) {
-                            utils.loading(false);
-                            hound.success("编辑成功", "", 1000);
-                            utils.modal.modal('hide');
-                            loadData();
-                        })
+                    //if($("#visaPassportForm").valid()) {
+                    //    utils.loading(true);
+                    //    utils.ajaxSubmit(apis.category.updateById, $("#visaPassportForm").serialize(), function (data) {
+                    //        utils.loading(false);
+                    //        hound.success("编辑成功", "", 1000);
+                    //        utils.modal.modal('hide');
+                    //        loadData();
+                    //    })
+                    //}
+
+                    var editerContent = $(".w-e-text");
+                    var editerImg = editerContent.find("img");
+                    //统计富文本编辑器中图片的数量
+                    if(editerImg.length>0){
+                        //图片src的长度大于500的需要上传，小于500的直接提交
+                        var submitImgArr = [];
+                        for(var i=0;i<editerImg.length;i++){
+                            if(editerImg.eq(i).attr("src").length>500){
+                                submitImgArr.push(editerImg.eq(i));
+                            }
+                        }
+
+                        function func_digui(arry,len){
+                            var temp;
+                            for(i=0;i<len;i++){
+                                if(i==0){
+                                    temp =arry[0];
+                                    arry.splice(i,1);
+                                    $.ajax({
+                                        type:'POST',
+                                        url: "@@API",
+                                        data: {
+                                            c:"img",
+                                            a:"uploadForBase64",
+                                            linkUserName:consts.param.linkUserName,
+                                            linkPassword:consts.param.linkPassword,
+                                            signature:consts.param.signature,
+                                            userToken: $.cookie('userToken'),
+                                            content:temp.attr("src")
+                                        },
+                                        dataType: 'json',
+                                        success:function(data){
+                                            temp.attr("src",data.result);
+                                            len = arry.length;
+                                            if(len ==0){
+                                                return;
+                                            }
+                                            func_digui(arry,len);
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                        if(submitImgArr.length!=0){
+                            func_digui(submitImgArr,submitImgArr.length);
+                            setTimeout(function(){
+                                var canPost = true;
+                                for(var i=0;i<editerImg.length;i++){
+                                    if(editerImg.eq(i).attr("src").length>500){
+                                        canPost = false;
+                                        break;
+                                    }
+                                }
+                                if(canPost){
+                                    if($("#visaPassportForm").valid()) {
+                                        $("input[name=tips]").val($(".w-e-text").html());
+                                        utils.ajaxSubmit(apis.category.updateById, $("#visaPassportForm").serialize(), function (data) {
+                                            hound.success("编辑成功", "", 1000);
+                                            utils.modal.modal('hide');
+                                            loadData();
+                                        })
+                                    }
+                                }
+                            },1500);
+                        }else{
+                            if($("#visaPassportForm").valid()) {
+                                $("input[name=tips]").val($(".w-e-text").html());
+                                utils.ajaxSubmit(apis.category.updateById, $("#visaPassportForm").serialize(), function (data) {
+                                    hound.success("编辑成功", "", 1000);
+                                    utils.modal.modal('hide');
+                                    loadData();
+                                })
+                            }
+                        }
+                    }else{
+                        if($("#visaPassportForm").valid()) {
+                            $("input[name=tips]").val($(".w-e-text").html());
+                            utils.ajaxSubmit(apis.category.updateById, $("#visaPassportForm").serialize(), function (data) {
+                                hound.success("编辑成功", "", 1000);
+                                utils.modal.modal('hide');
+                                loadData();
+                            })
+                        }
                     }
+
                 }, 'lg');
+                var E = window.wangEditor;
+                var editor = new E('#editor');
+                editor.customConfig.showLinkImg = false;         // 隐藏“网络图片”tab
+                editor.customConfig.uploadImgShowBase64 = true;   // 使用 base64 保存图片
+                editor.create();
+                $(".w-e-text-container").css({"height":"300px"});
+                if(getByIdData.dataArr.tips){
+                    //字符转化成代码显示
+                    var n = getByIdData.dataArr;
+                    n.tips = n.tips.replace(/&lt;/g,"<");
+                    n.tips = n.tips.replace(/&gt;/g,">");
+                    n.tips = n.tips.replace(/&quot;/g,'"');
+                    n.tips = n.tips.replace(/&amp;nbsp;/g," ");
+                }
+                $(".w-e-text").html(getByIdData.dataArr.tips);
+                $(".w-e-text-container").css({"z-index":"100"});
+                $("#editor").find(".w-e-menu").css({"z-index":"101"});
                 uploadFile();
+                parentIdChange();
             });
         },
         //查看
@@ -138,6 +350,24 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
                 };
                 utils.renderModal('查看分类', template('modalDiv', getByIdData),'', 'lg');
                 $("#visaPassportForm").append($("fieldset").prop('disabled', true));
+                var E = window.wangEditor;
+                var editor = new E('#editor');
+                editor.customConfig.showLinkImg = false;         // 隐藏“网络图片”tab
+                editor.customConfig.uploadImgShowBase64 = true;   // 使用 base64 保存图片
+                editor.create();
+                $(".w-e-text-container").css({"height":"300px"});
+                if(getByIdData.dataArr.tips){
+                    //字符转化成代码显示
+                    var n = getByIdData.dataArr;
+                    n.tips = n.tips.replace(/&lt;/g,"<");
+                    n.tips = n.tips.replace(/&gt;/g,">");
+                    n.tips = n.tips.replace(/&quot;/g,'"');
+                    n.tips = n.tips.replace(/&amp;nbsp;/g," ");
+                }
+                $(".w-e-text").html(getByIdData.dataArr.tips);
+                editor.$textElem.attr('contenteditable', false);
+                $(".w-e-text-container").css({"z-index":"100"});
+                $("#editor").find(".w-e-menu").css({"z-index":"101"});
             });
         },
         //无效
@@ -161,7 +391,7 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
         //优化方案
         plan:function($this){
             var id = $this.closest("tr").attr("data-id");
-            var parentCategoryTitle = $this.closest("tr").find("td").eq(4).text();
+            var parentCategoryTitle = $this.closest("tr").find("td").eq(3).text();
             var categoryTitle = $this.closest("tr").find("td").eq(1).text();
             window.open("@@HOSTview/mall/categoryPlan.html?id=" + id + "&parentCategoryTitle=" + parentCategoryTitle + "&categoryTitle=" + categoryTitle);
         }

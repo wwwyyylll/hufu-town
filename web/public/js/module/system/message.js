@@ -232,12 +232,14 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
                 editor.customConfig.uploadImgShowBase64 = true;   // 使用 base64 保存图片
                 editor.create();
                 $(".w-e-text-container").css({"height":"300px"});
-                //字符转化成代码显示
-                var n = getByIdData.dataArr;
-                n.content = n.content.replace(/&lt;/g,"<");
-                n.content = n.content.replace(/&gt;/g,">");
-                n.content = n.content.replace(/&quot;/g,'"');
-                n.content = n.content.replace(/&amp;nbsp;/g," ");
+                if(getByIdData.dataArr.content){
+                    //字符转化成代码显示
+                    var n = getByIdData.dataArr;
+                    n.content = n.content.replace(/&lt;/g,"<");
+                    n.content = n.content.replace(/&gt;/g,">");
+                    n.content = n.content.replace(/&quot;/g,'"');
+                    n.content = n.content.replace(/&amp;nbsp;/g," ");
+                }
                 $(".w-e-text").html(getByIdData.dataArr.content);
                 $(".w-e-text-container").css({"z-index":"100"});
                 $("#editor").find(".w-e-menu").css({"z-index":"101"});
@@ -258,12 +260,14 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
                 editor.customConfig.uploadImgShowBase64 = true;   // 使用 base64 保存图片
                 editor.create();
                 $(".w-e-text-container").css({"height":"300px"});
-                //字符转化成代码显示
-                var n = getByIdData.dataArr;
-                n.content = n.content.replace(/&lt;/g,"<");
-                n.content = n.content.replace(/&gt;/g,">");
-                n.content = n.content.replace(/&quot;/g,'"');
-                n.content = n.content.replace(/&amp;nbsp;/g," ");
+                if(getByIdData.dataArr.content){
+                    //字符转化成代码显示
+                    var n = getByIdData.dataArr;
+                    n.content = n.content.replace(/&lt;/g,"<");
+                    n.content = n.content.replace(/&gt;/g,">");
+                    n.content = n.content.replace(/&quot;/g,'"');
+                    n.content = n.content.replace(/&amp;nbsp;/g," ");
+                }
                 $(".w-e-text").html(getByIdData.dataArr.content);
                 editor.$textElem.attr('contenteditable', false);
                 $(".w-e-text-container").css({"z-index":"100"});

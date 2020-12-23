@@ -53,7 +53,8 @@
         <th>ID</th>
         <th style="width:10%;word-wrap: break-word;word-break:break-all;">标题</th>
         <th style="width:15%;word-wrap: break-word;word-break:break-all;">副标题</th>
-        <th>图片</th>
+        <th>背景图</th>
+        <th>分类背景图</th>
         <th>默认订单数</th>
         <th>订单数</th>
         <th>排序</th>
@@ -84,6 +85,13 @@
             <% if(dataArr[i].imgUrl){ %>
             <a href="<%= dataArr[i].imgUrl %>" target="_blank">
                 <img src="<%= dataArr[i].imgUrl %>" style="display: inline-block;width: 50px;height: 50px">
+            </a>
+            <% } %>
+        </td>
+        <td>
+            <% if(dataArr[i].categoryImgUrl){ %>
+            <a href="<%= dataArr[i].categoryImgUrl %>" target="_blank">
+                <img src="<%= dataArr[i].categoryImgUrl %>" style="display: inline-block;width: 50px;height: 50px">
             </a>
             <% } %>
         </td>
