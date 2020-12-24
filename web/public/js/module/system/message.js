@@ -118,6 +118,7 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
         editor.customConfig.uploadImgShowBase64 = true;   // 使用 base64 保存图片
         editor.create();
         $(".w-e-text-container").css({"height":"300px"});
+        $(".w-e-text-container").css({"width":"692px"});
         $(".w-e-text-container").css({"z-index":"100"});
         $("#editor").find(".w-e-menu").css({"z-index":"101"});
     });
@@ -232,6 +233,7 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
                 editor.customConfig.uploadImgShowBase64 = true;   // 使用 base64 保存图片
                 editor.create();
                 $(".w-e-text-container").css({"height":"300px"});
+                $(".w-e-text-container").css({"width":"692px"});
                 if(getByIdData.dataArr.content){
                     //字符转化成代码显示
                     var n = getByIdData.dataArr;
@@ -260,6 +262,7 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
                 editor.customConfig.uploadImgShowBase64 = true;   // 使用 base64 保存图片
                 editor.create();
                 $(".w-e-text-container").css({"height":"300px"});
+                $(".w-e-text-container").css({"width":"692px"});
                 if(getByIdData.dataArr.content){
                     //字符转化成代码显示
                     var n = getByIdData.dataArr;

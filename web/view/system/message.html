@@ -66,7 +66,7 @@
                 </div>
             </div>
         </th>
-        <th>创建时间</th>
+        <th>显示时间</th>
         <th>操作</th>
     </tr>
     </thead>
@@ -79,7 +79,7 @@
         <td><%= dataArr[i].idx %></td>
         <!--<td style="width:15%;word-wrap: break-word;word-break:break-all;"><%= dataArr[i].content %></td>-->
         <td><%- dataArr[i].statusText %></td>
-        <td><%= dataArr[i].createTime %></td>
+        <td><%= dataArr[i].showTime %></td>
         <td>
             <div class="d-flex flex-wrap justify-content-center">
                 <%- dataArr[i].materialButtonGroup %>
@@ -114,6 +114,16 @@
                             <span class="input-group-text">排序</span>
                         </div>
                         <input type="text" name="idx" placeholder="请输入排序" value="<%= dataArr.idx %>" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-6">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">显示时间</span>
+                        </div>
+                        <input autocomplete="off" type="text" name="showTime" placeholder="请输入显示时间" onclick="laydate({istime: false, format: 'YYYY-MM-DD'})" value="<%= dataArr.showTime %>" class="form-control">
                     </div>
                 </div>
             </div>
