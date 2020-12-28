@@ -111,7 +111,10 @@
             <tr>
                 <th>ID</th>
                 <th>来源</th>
+                <th>增加变动前</th>
                 <th>金额</th>
+                <th>剩余</th>
+                <th style="width:10%;word-wrap: break-word;word-break:break-all;">详细</th>
                 <th>操作人</th>
                 <th>操作人类型</th>
                 <th>操作时间</th>
@@ -123,7 +126,10 @@
             <tr data-id="<%= dataArr[i].id %>">
                 <td><%= dataArr[i].id %></td>
                 <td><%= dataArr[i].source %></td>
+                <td><% if(dataArr[i].beforeMoney){ %> <%= dataArr[i].beforeMoney %> <% } %>元</td>
                 <td><% if(dataArr[i].money){ %> <%= dataArr[i].money %> <% } %>元</td>
+                <td><% if(dataArr[i].afterMoney){ %> <%= dataArr[i].afterMoney %> <% } %>元</td>
+                <td style="width:10%;word-wrap: break-word;word-break:break-all;"><%= dataArr[i].memo %></td>
                 <td><%= dataArr[i].name %></td>
                 <td><%- dataArr[i].userTypeText %></td>
                 <td><%= dataArr[i].createTime %></td>
@@ -212,6 +218,16 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text">元</span>
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 15px">
+                <div class="col-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">备注</span>
+                        </div>
+                        <textarea style="resize:vertical;min-height: 70px" class="form-control" name="memo" required></textarea>
                     </div>
                 </div>
             </div>

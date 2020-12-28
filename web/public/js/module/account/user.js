@@ -85,7 +85,7 @@ require(["consts", "apis", "utils", "common"], function(consts, apis, utils) {
                 n.userTypeText = consts.status.userType[n.userType];
             });
             data.userId = getMoneyListParam.id;
-            utils.renderModal('金额变化日志列表',template('moneyList', data),'', 'lg');
+            utils.renderModal('金额变化日志列表',template('moneyList', data),'', 'xl');
             utils.bindPagination($("#moneyPagination"), getMoneyListParam, getMoneyListData);
             $("#moneyPagination").html(utils.pagination(parseInt(data.cnt), getMoneyListParam.pageNo));
         });

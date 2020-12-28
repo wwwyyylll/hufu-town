@@ -13,7 +13,7 @@ require(["consts", "apis", "utils"], function(consts, apis, utils) {
             utils.ajaxSubmit(apis.login.login,$form.serialize(),function(data){
                 //$.cookie('userName',$("input[name=userName]").val());
                 $.cookie('userToken',data.userToken);
-                window.location.href = "@@HOSTview/system/warn.html";
+                window.location.href = "@@HOSTview/account/user.html";
             });
         }
     });
